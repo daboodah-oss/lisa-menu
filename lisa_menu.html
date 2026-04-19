@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Lisa's Menu</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: #f7f3ee; color: #2c3e2c; padding-bottom: 110px; }
+header { background: #5a7a5a; padding: 16px 14px 12px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.15); }
+.header-top { display: flex; align-items: center; justify-content: space-between; }
+header h1 { font-size: 20px; color: white; font-weight: 700; }
+header p { color: rgba(255,255,255,0.8); font-size: 12px; margin-top: 3px; }
+.mode-toggle { display: flex; background: rgba(0,0,0,0.25); border-radius: 20px; padding: 3px; gap: 2px; }
+.mode-btn { padding: 6px 12px; border-radius: 16px; border: none; font-size: 12px; font-weight: 700; cursor: pointer; background: transparent; color: rgba(255,255,255,0.75); }
+.mode-btn.active { background: white; color: #5a7a5a; }
+body.care header { background: #1a4a7a; }
+body.care .mode-btn.active { color: #1a4a7a; }
+body.care .tab.on { color: #1a4a7a; border-bottom-color: #1a4a7a; }
+body.care .card.picked { border-color: #1a4a7a; background: #e8f0fa; }
+body.care .card.picked .ck { background: #1a4a7a; }
+body.care .snote { background: #e8f0fa; border-color: #1a4a7a; color: #1a4a7a; }
+body.care .order-btn { background: #1a4a7a; }
+body.care .order-btn .bdg { color: #1a4a7a; }
+.tabs { display: flex; overflow-x: auto; background: white; border-bottom: 2px solid #e0e8e0; padding: 0 6px; scrollbar-width: none; position: sticky; top: 76px; z-index: 90; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { flex-shrink: 0; padding: 12px 13px; font-size: 13px; font-weight: 600; color: #7a9170; border-bottom: 3px solid transparent; cursor: pointer; white-space: nowrap; margin-bottom: -2px; }
+.tab.on { color: #5a7a5a; border-bottom-color: #5a7a5a; }
+.sec { display: none; padding: 14px 12px 0; }
+.sec.on { display: block; }
+.snote { background: #e8f0e8; border-left: 3px solid #5a7a5a; border-radius: 0 8px 8px 0; padding: 9px 13px; font-size: 13px; color: #5a7a5a; margin-bottom: 12px; font-weight: 600; }
+.sublabel { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #7a9170; margin: 14px 0 8px 2px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.card { background: white; border-radius: 14px; padding: 14px 12px; border: 2px solid #e0e8e0; cursor: pointer; box-shadow: 0 2px 8px rgba(90,122,90,0.08); position: relative; user-select: none; -webkit-user-select: none; }
+.card.picked { border-color: #5a7a5a; background: #e8f0e8; }
+.ck { position: absolute; top: 8px; right: 8px; width: 20px; height: 20px; border-radius: 50%; background: #5a7a5a; color: white; font-size: 12px; line-height: 20px; text-align: center; opacity: 0; }
+.card.picked .ck { opacity: 1; }
+.ce { font-size: 24px; display: block; margin-bottom: 6px; }
+.cn { font-size: 13px; font-weight: 700; line-height: 1.3; }
+.cno { font-size: 11px; color: #7a9170; margin-top: 3px; line-height: 1.4; }
+.rh { display: none; font-size: 11px; color: #1a4a7a; font-weight: 700; margin-top: 5px; }
+body.care .rh { display: block; }
+.obar { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid #e0e8e0; padding: 12px 14px; z-index: 200; box-shadow: 0 -3px 12px rgba(0,0,0,0.08); }
+.order-btn { width: 100%; background: #5a7a5a; color: white; border: none; border-radius: 14px; padding: 14px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.order-btn:disabled { background: #b0c4b0; }
+.bdg { background: white; color: #5a7a5a; border-radius: 20px; padding: 2px 9px; font-size: 13px; font-weight: 800; }
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 300; align-items: flex-end; }
+.overlay.on { display: flex; }
+.sheet { background: white; border-radius: 22px 22px 0 0; padding: 20px 16px 40px; width: 100%; max-height: 88vh; overflow-y: auto; }
+.handle { width: 40px; height: 4px; background: #e0e8e0; border-radius: 2px; margin: 0 auto 16px; }
+.sheet h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.sheet p { font-size: 13px; color: #7a9170; margin-bottom: 16px; }
+.oitem { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #e0e8e0; }
+.oitem:last-child { border-bottom: none; }
+.oem { font-size: 20px; }
+.onm { font-weight: 600; font-size: 14px; flex: 1; }
+.orem { color: #ccc; font-size: 22px; cursor: pointer; padding: 4px 8px; }
+.btns { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+.btn-g { background: #5a7a5a; color: white; border: none; border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; }
+.btn-s { background: #e8f0e8; color: #5a7a5a; border: none; border-radius: 12px; padding: 13px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; }
+.sendview { display: none; }
+.sendview.on { display: block; }
+.sendhead { text-align: center; margin-bottom: 14px; }
+.sendicon { font-size: 42px; }
+.instruct { background: #fff8e1; border: 1px solid #ffe082; border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; font-size: 13px; color: #5d4037; }
+.instruct b { display: block; margin-bottom: 6px; font-size: 14px; }
+.istep { display: flex; gap: 8px; margin-top: 7px; align-items: flex-start; }
+.istepn { background: #5a7a5a; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+.msgbox { width: 100%; background: #e8f0e8; border: 2px solid #c4d9c4; border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 600; line-height: 1.7; color: #2c3e2c; resize: none; min-height: 110px; margin-bottom: 10px; -webkit-user-select: all; user-select: all; }
+.msgbox:focus { outline: none; }
+.copybtn { width: 100%; background: #5a7a5a; color: white; border: none; border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; margin-bottom: 10px; }
+.copybtn.done { background: #2e7d52; }
+.rmovl { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 400; align-items: flex-end; }
+.rmovl.on { display: flex; }
+.rsheet { background: white; border-radius: 22px 22px 0 0; padding: 20px 16px 48px; width: 100%; max-height: 88vh; overflow-y: auto; }
+.rhead { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.rem { font-size: 38px; }
+.rtitle { font-size: 19px; font-weight: 700; color: #1a4a7a; }
+.rlabel { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #1a4a7a; margin: 12px 0 6px; }
+.ilist { list-style: none; }
+.ilist li { padding: 7px 0; border-bottom: 1px solid #e0e8e0; font-size: 14px; font-weight: 600; display: flex; gap: 8px; align-items: center; }
+.ilist li:last-child { border-bottom: none; }
+.ilist li::before { content: "·"; color: #1a4a7a; font-size: 20px; line-height: 1; flex-shrink: 0; }
+.slist { list-style: none; }
+.slist li { display: flex; gap: 10px; padding: 9px 0; border-bottom: 1px solid #e0e8e0; font-size: 14px; line-height: 1.5; }
+.slist li:last-child { border-bottom: none; }
+.sn { background: #1a4a7a; color: white; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+.rtip { background: #e8f0fa; border-left: 3px solid #1a4a7a; border-radius: 0 8px 8px 0; padding: 10px 12px; font-size: 13px; color: #1a4a7a; margin-top: 14px; font-weight: 600; }
+.closebtn { width: 100%; background: #e8f0fa; color: #1a4a7a; border: none; border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 16px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div>
+      <h1 id="htitle">Lisa's Menu</h1>
+      <p id="hsub">Tap what sounds good — we'll take care of the rest</p>
+    </div>
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="lisaBtn" onclick="setMode('lisa')">Lisa</button>
+      <button class="mode-btn" id="careBtn" onclick="setMode('care')">Cook Mode</button>
+    </div>
+  </div>
+</header>
+
+<div class="tabs">
+  <div class="tab on" onclick="go('breakfast',this)">Breakfast</div>
+  <div class="tab" onclick="go('lunch',this)">Lunch</div>
+  <div class="tab" onclick="go('dinner',this)">Dinner</div>
+  <div class="tab" onclick="go('sides',this)">Sides</div>
+  <div class="tab" onclick="go('snacks',this)">Snacks</div>
+  <div class="tab" onclick="go('drinks',this)">Drinks</div>
+</div>
+
+<!-- BREAKFAST -->
+<div class="sec on" id="tab-breakfast">
+<div class="snote">Everything here is safe for your GI Soft diet</div>
+<div class="sublabel">Entrees</div>
+<div class="grid">
+  <div class="card" onclick="tap(this)" data-n="Bisquick Pancakes" data-e="🥞"><div class="ck">✓</div><span class="ce">🥞</span><div class="cn">Bisquick Pancakes</div><div class="cno">With butter and syrup</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="Scrambled Eggs" data-e="🍳"><div class="ck">✓</div><span class="ce">🍳</span><div class="cn">Scrambled Eggs</div><div class="cno">Soft and fluffy</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="French Toast" data-e="🍞"><div class="ck">✓</div><span class="ce">🍞</span><div class="cn">French Toast</div><div class="cno">With butter and syrup</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="Fruit and Cottage Cheese" data-e="🍑"><div class="ck">✓</div><span class="ce">🍑</span><div class="cn">Fruit &amp; Cottage Cheese</div><div class="cno">Mandarin oranges or applesauce</div><div class="rh">Tap for recipe</div></div>
+</div>
+<div class="sublabel">Breads</div>
+<div class="grid">
+  <div class="card" onclick="tap(this)" data-n="White Toast" data-e="🍞"><div class="ck">✓</div><span class="ce">🍞</span><div class="cn">White Toast</div><div class="cno">With jelly or margarine</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="Hawaiian Sweet Roll" data-e="🥐"><div class="ck">✓</div><span class="ce">🥐</span><div class="cn">Hawaiian Sweet Roll</div><div class="cno">Soft, not toasted</div><div class="rh">Tap for recipe</div></div>
+</div>
+<div class="sublabel">Sides</div>
+<div class="grid">
+  <div class="card" onclick="tap(this)" data-n="Hard-Boiled Egg" data-e="🥚"><div class="ck">✓</div><span class="ce">🥚</span><div class="cn">Hard-Boiled Egg</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="Cottage Cheese" data-e="🫙"><div class="ck">✓</div><span class="ce">🫙</span><div class="cn">Cottage Cheese</div><div class="rh">Tap for recipe</div></div>
+</div>
+</div>
+
+<!-- LUNCH -->
+<div class="sec" id="tab-lunch">
+<div class="snote">Everything here is safe for your GI Soft diet</div>
+<div class="sublabel">Soups</div>
+<div class="grid">
+  <div class="card" onclick="tap(this)" data-n="Chicken Noodle Soup" data-e="🍲"><div class="ck">✓</div><span class="ce">🍲</span><div class="cn">Chicken Noodle Soup</div><div class="cno">Homemade with broth and noodles</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="Egg Noodles in Broth" data-e="🍜"><div class="ck">✓</div><span class="ce">🍜</span><div class="cn">Egg Noodles in Broth</div><div class="cno">Simple and warm</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="Campbells Double Noodle" data-e="🥫"><div class="ck">✓</div><span class="ce">🥫</span><div class="cn">Campbell's Double Noodle</div><div class="cno">Ready to heat</div><div class="rh">Tap for recipe</div></div>
+</div>
+<div class="sublabel">Sandwiches</div>
+<div class="grid">
+  <div class="card" onclick="tap(this)" data-n="Turkey Sandwich" data-e="🥪"><div class="ck">✓</div><span class="ce">🥪</span><div class="cn">Turkey Sandwich</div><div class="cno">Soft bread, mustard OK</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="Ham Sandwich" data-e="🥪"><div class="ck">✓</div><span class="ce">🥪</span><div class="cn">Ham Sandwich</div><div class="cno">Soft bread, mustard OK</div><div class="rh">Tap for recipe</div></div>
+</div>
+</div>
+
+<!-- DINNER -->
+<div class="sec" id="tab-dinner">
+<div class="snote">Everything here is safe for your GI Soft diet</div>
+<div class="grid">
+  <div class="card" onclick="tap(this)" data-n="Chicken Noodle Soup" data-e="🍲"><div class="ck">✓</div><span class="ce">🍲</span><div class="cn">Chicken Noodle Soup</div><div class="cno">Homemade with broth and noodles</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="Egg Noodles in Broth" data-e="🍜"><div class="ck">✓</div><span class="ce">🍜</span><div class="cn">Egg Noodles in Broth</div><div class="cno">Simple and warm</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="Spaghetti with Marinara" data-e="🍝"><div class="ck">✓</div><span class="ce">🍝</span><div class="cn">Spaghetti with Marinara</div><div class="cno">White pasta, plain tomato sauce</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="Warmed Turkey" data-e="🦃"><div class="ck">✓</div><span class="ce">🦃</span><div class="cn">Warmed Turkey</div><div class="cno">Buddig turkey, heated</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="Warmed Ham" data-e="🍖"><div class="ck">✓</div><span class="ce">🍖</span><div class="cn">Warmed Ham</div><div class="cno">Buddig ham, heated</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="Scrambled Eggs" data-e="🍳"><div class="ck">✓</div><span class="ce">🍳</span><div class="cn">Scrambled Eggs</div><div class="cno">Light dinner option</div><div class="rh">Tap for recipe</div></div>
+</div>
+</div>
+
+<!-- SIDES -->
+<div class="sec" id="tab-sides">
+<div class="snote">Everything here is safe for your GI Soft diet</div>
+<div class="grid">
+  <div class="card" onclick="tap(this)" data-n="Green Beans" data-e="🫘"><div class="ck">✓</div><span class="ce">🫘</span><div class="cn">Green Beans</div><div class="cno">Canned Del Monte, soft</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="Applesauce" data-e="🍎"><div class="ck">✓</div><span class="ce">🍎</span><div class="cn">Applesauce</div><div class="cno">Mott's</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="Mandarin Oranges" data-e="🍊"><div class="ck">✓</div><span class="ce">🍊</span><div class="cn">Mandarin Oranges</div><div class="cno">Canned in light syrup</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="Hawaiian Sweet Roll" data-e="🥐"><div class="ck">✓</div><span class="ce">🥐</span><div class="cn">Hawaiian Sweet Roll</div><div class="cno">Soft, not toasted</div><div class="rh">Tap for recipe</div></div>
+</div>
+</div>
+
+<!-- SNACKS -->
+<div class="sec" id="tab-snacks">
+<div class="snote">Everything here is safe for your GI Soft diet</div>
+<div class="grid">
+  <div class="card" onclick="tap(this)" data-n="Boost Shake" data-e="🥤"><div class="ck">✓</div><span class="ce">🥤</span><div class="cn">Boost Shake</div><div class="cno">Nutritional supplement</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="Cottage Cheese" data-e="🫙"><div class="ck">✓</div><span class="ce">🫙</span><div class="cn">Cottage Cheese</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="Applesauce" data-e="🍎"><div class="ck">✓</div><span class="ce">🍎</span><div class="cn">Applesauce</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="Mandarin Oranges" data-e="🍊"><div class="ck">✓</div><span class="ce">🍊</span><div class="cn">Mandarin Oranges</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="Hard-Boiled Egg" data-e="🥚"><div class="ck">✓</div><span class="ce">🥚</span><div class="cn">Hard-Boiled Egg</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="White Toast" data-e="🍞"><div class="ck">✓</div><span class="ce">🍞</span><div class="cn">Toast with Jelly</div><div class="cno">Light snack</div><div class="rh">Tap for recipe</div></div>
+</div>
+</div>
+
+<!-- DRINKS -->
+<div class="sec" id="tab-drinks">
+<div class="snote">Everything here is safe for your GI Soft diet</div>
+<div class="grid">
+  <div class="card" onclick="tap(this)" data-n="Milk" data-e="🥛"><div class="ck">✓</div><span class="ce">🥛</span><div class="cn">Milk</div><div class="cno">2% or skim only</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="Mango Juice" data-e="🥭"><div class="ck">✓</div><span class="ce">🥭</span><div class="cn">Mango Juice</div><div class="cno">Simply Mango</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="Water" data-e="💧"><div class="ck">✓</div><span class="ce">💧</span><div class="cn">Water</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="Boost Shake" data-e="🥤"><div class="ck">✓</div><span class="ce">🥤</span><div class="cn">Boost Shake</div><div class="cno">Nutritional supplement</div><div class="rh">Tap for recipe</div></div>
+</div>
+</div>
+
+<!-- ORDER BAR -->
+<div class="obar">
+  <button class="order-btn" id="oBtn" onclick="openOrder()" disabled>
+    <span id="oLbl">My Selections</span>
+    <span class="bdg" id="oCnt">0</span>
+  </button>
+</div>
+
+<!-- ORDER OVERLAY -->
+<div class="overlay" id="ordOvl" onclick="bgClose(event,'ordOvl')">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div id="revView">
+      <h2>Your Selections</h2>
+      <p>Tap x to remove anything, then press Send.</p>
+      <div id="oItems"></div>
+      <div class="btns">
+        <button class="btn-g" onclick="showSend()">Send My Request</button>
+        <button class="btn-s" onclick="closeOvl('ordOvl')">Keep Browsing</button>
+      </div>
+    </div>
+    <div class="sendview" id="sendView">
+      <div class="sendhead"><div class="sendicon">📋</div><h2>Ready to Send!</h2><p>Copy and paste into Messenger.</p></div>
+      <div class="instruct">
+        <b>3 easy steps:</b>
+        <div class="istep"><div class="istepn">1</div><div>Tap <b>Copy Message</b> below</div></div>
+        <div class="istep"><div class="istepn">2</div><div>Open <b>Messenger</b> and go to the family group</div></div>
+        <div class="istep"><div class="istepn">3</div><div>Long-press the text field, tap <b>Paste</b>, then Send</div></div>
+      </div>
+      <textarea class="msgbox" id="msgBox" readonly></textarea>
+      <button class="copybtn" id="copyBtn" onclick="doCopy()">Copy Message</button>
+      <button class="btn-s" onclick="backToReview()">Edit Selections</button>
+      <br><br>
+      <button class="btn-s" onclick="resetAll()">Start Over</button>
+    </div>
+  </div>
+</div>
+
+<!-- RECIPE OVERLAY -->
+<div class="rmovl" id="recOvl" onclick="bgClose(event,'recOvl')">
+  <div class="rsheet">
+    <div class="handle"></div>
+    <div class="rhead">
+      <div class="rem" id="rEm"></div>
+      <div class="rtitle" id="rTitle"></div>
+    </div>
+    <div class="rlabel">Ingredients</div>
+    <ul class="ilist" id="rIng"></ul>
+    <div class="rlabel">Steps</div>
+    <ol class="slist" id="rSteps"></ol>
+    <div class="rtip" id="rTip" style="display:none"></div>
+    <button class="closebtn" onclick="closeOvl('recOvl')">Done</button>
+  </div>
+</div>
+
+<script>
+var sel = [];
+var care = false;
+var R = {
+"Bisquick Pancakes":["🥞",["Bisquick mix","1 egg","3/4 cup milk","Butter or cooking spray","Mrs. Butterworth's syrup or jelly"],["Pour 1 cup Bisquick, 1 egg, and 3/4 cup milk into a bowl. Stir until mostly smooth.","Spray a pan or add a small pat of butter. Heat on medium.","Pour small circles of batter. Wait until bubbles pop on top and edges look dry — about 2 min.","Flip with a spatula. Cook 1 more minute. Serve with syrup or jelly."],"Keep heat on medium — too high and the outside burns before the inside cooks."],
+"Scrambled Eggs":["🍳",["2-3 eggs","Splash of milk","Small pat of butter","Salt"],["Crack eggs into a bowl with a splash of milk and a pinch of salt. Beat with a fork.","Melt butter in a pan on LOW heat.","Pour in eggs. Wait 20 seconds, then gently push from edges to center. Repeat slowly.","Take off heat when eggs look just barely set — not wet, not dry."],"Low and slow is the secret. High heat makes rubbery eggs."],
+"French Toast":["🍞",["2 slices soft white bread","1 egg","3 tbsp milk","Small pat of butter","Mrs. Butterworth's syrup"],["Beat egg and milk together in a shallow bowl.","Melt butter in a pan on medium heat.","Dip bread in egg mixture, 10 seconds per side.","Cook 2-3 minutes until golden on the bottom. Flip, cook 2 more minutes. Serve with syrup."],"Use thick soft bread — it soaks up the egg without falling apart."],
+"Fruit and Cottage Cheese":["🍑",["1 cup cottage cheese","Canned mandarin oranges OR applesauce"],["Open and drain the canned fruit.","Scoop cottage cheese into a bowl. Add the fruit alongside. Done."],"No cooking needed. One of the easiest things on the menu."],
+"White Toast":["🍞",["White bread","Jelly or margarine"],["Put bread in toaster on LOW setting.","Spread with jelly or margarine when it pops."],"Keep toast light — very dark toast is too hard for this diet."],
+"Hawaiian Sweet Roll":["🥐",["King's Hawaiian Sweet Roll","Optional: jelly"],["Pull a roll from the package. Serve as-is — do not toast.","Optional: split open and add a little jelly."],"Already soft and sweet — no prep needed."],
+"Hard-Boiled Egg":["🥚",["1-2 eggs","Water"],["Put eggs in a small pot. Cover with cold water by 1 inch. Bring to a boil.","Once boiling, turn off heat, lid on, leave for 10 minutes.","Pour out hot water, run cold water over eggs 1 minute. Peel and serve."],"Make a few at once — keep in the fridge for up to a week."],
+"Cottage Cheese":["🫙",["Cottage cheese"],["Scoop into a bowl. Serve as-is."],"Can add mandarin oranges or applesauce on top."],
+"Chicken Noodle Soup":["🍲",["1 carton fat-free chicken broth","2 handfuls Mrs. Weiss egg noodles","1 Buddig honey roasted turkey packet","Salt"],["Pour broth into a pot. Bring to a boil on high heat.","Add egg noodles. Reduce to medium and cook 8 minutes.","Tear Buddig turkey into pieces and add. Cook 1 more minute. Add salt if needed.","Serve hot."],"One of the best things on this diet — easy, warm, and gentle."],
+"Egg Noodles in Broth":["🍜",["1-2 cups fat-free chicken broth","1-2 handfuls Mrs. Weiss egg noodles","Salt"],["Pour broth into a pot and bring to a boil.","Add egg noodles. Cook 8 minutes on medium. Add a pinch of salt if needed.","Serve in a bowl."],"Super simple — broth and noodles. Gentle and easy to eat."],
+"Campbells Double Noodle":["🥫",["1 can Campbell's Double Noodle Soup","1 can of water"],["Open can, pour into pot. Add one can of water. Stir.","Heat on medium until hot, about 5 minutes. Serve."],"Quickest soup option — 5 minutes total."],
+"Turkey Sandwich":["🥪",["2 slices soft white bread — do not toast","Buddig honey roasted turkey","Mustard or ketchup"],["Lay out two slices of soft white bread. Do NOT toast.","Layer turkey on one slice. Spread mustard or ketchup on the other.","Press together, cut in half, serve."],"Soft bread only. Swiss cheese is the only allowed topping cheese."],
+"Ham Sandwich":["🥪",["2 slices soft white bread — do not toast","Buddig honey ham","Mustard or ketchup"],["Lay out two slices of soft white bread. Do NOT toast.","Layer ham on one slice. Spread mustard or ketchup on the other.","Press together, cut in half, serve."],"Soft bread only. Swiss cheese is the only allowed topping cheese."],
+"Spaghetti with Marinara":["🍝",["Creamette white spaghetti — NOT the whole grain box","Jar of plain marinara sauce","Water and salt"],["Boil salted water. Add spaghetti and cook per box — usually 9-11 min until soft.","While pasta cooks, heat marinara in a small pot on low.","Drain pasta, top with marinara and serve."],"White pasta only. Plain tomato sauce only — no meat, no cream."],
+"Warmed Turkey":["🦃",["Buddig honey roasted turkey","Optional: ketchup or mustard alongside"],["Open the Buddig turkey packet.","Microwave 30 seconds, or heat in a pan on low for 1 minute.","Serve with ketchup or mustard alongside if desired."],"Simple protein option — pairs well with green beans or applesauce."],
+"Warmed Ham":["🍖",["Buddig honey ham","Optional: ketchup or mustard alongside"],["Open the Buddig ham packet.","Microwave 30 seconds, or heat in a pan on low for 1 minute.","Serve with ketchup or mustard alongside if desired."],"Simple protein option — pairs well with green beans or applesauce."],
+"Green Beans":["🫘",["1 can Del Monte cut green beans"],["Open can. Drain the liquid.","Microwave in a bowl for 90 seconds, or heat in a small pot on medium for 3-4 min.","Add a tiny pinch of salt if desired. Serve."],"Easiest side dish on the menu."],
+"Applesauce":["🍎",["Mott's Applesauce"],["Open the jar. Scoop into a bowl."],"One of the easiest and best snacks on the diet."],
+"Mandarin Oranges":["🍊",["Can of Kroger mandarin oranges in light syrup"],["Open can. Pour into a bowl. Serve."],"No prep. Already soft and ready to eat."],
+"Boost Shake":["🥤",["Boost nutritional shake"],["Open the bottle. Serve with a straw if she prefers."],"Good between meals for extra nutrition."],
+"Milk":["🥛",["Milk — 2% or skim ONLY"],["Pour into a glass. Serve cold."],"2% or skim only — whole milk is too high in fat."],
+"Mango Juice":["🥭",["Simply Mango juice"],["Pour into a glass."],""],
+"Water":["💧",["Water"],["Pour into a glass. Add ice if she likes."],"Staying hydrated is important during recovery."]
+};
+
+function tap(card) {
+  if (care) { showRecipe(card.getAttribute("data-n")); }
+  else { toggleCard(card); }
+}
+function toggleCard(card) {
+  var n = card.getAttribute("data-n");
+  var e = card.getAttribute("data-e");
+  if (card.classList.contains("picked")) {
+    card.classList.remove("picked");
+    var tmp = [];
+    for (var i = 0; i < sel.length; i++) { if (sel[i].n !== n) tmp.push(sel[i]); }
+    sel = tmp;
+  } else {
+    card.classList.add("picked");
+    sel.push({n:n, e:e});
+  }
+  updateBar();
+}
+function updateBar() {
+  document.getElementById("oCnt").textContent = sel.length;
+  document.getElementById("oBtn").disabled = (sel.length === 0);
+}
+function go(id, el) {
+  var tabs = document.querySelectorAll(".tab");
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove("on");
+  var secs = document.querySelectorAll(".sec");
+  for (var i = 0; i < secs.length; i++) secs[i].classList.remove("on");
+  el.classList.add("on");
+  document.getElementById("tab-" + id).classList.add("on");
+}
+function setMode(m) {
+  care = (m === "care");
+  document.body.classList.toggle("care", care);
+  document.getElementById("lisaBtn").classList.toggle("active", !care);
+  document.getElementById("careBtn").classList.toggle("active", care);
+  document.getElementById("htitle").textContent = care ? "Caregiver Mode" : "Lisa's Menu";
+  document.getElementById("hsub").textContent = care ? "Tap any item to see how to make it" : "Tap what sounds good — we'll take care of the rest";
+  document.getElementById("oLbl").textContent = care ? "Cooking Plan" : "My Selections";
+}
+function openOrder() {
+  buildReview();
+  document.getElementById("revView").style.display = "block";
+  document.getElementById("sendView").classList.remove("on");
+  document.getElementById("ordOvl").classList.add("on");
+}
+function buildReview() {
+  var h = "";
+  for (var i = 0; i < sel.length; i++) {
+    var nm = sel[i].n.replace(/'/g, "\\'");
+    h += '<div class="oitem"><span class="oem">' + sel[i].e + '</span><span class="onm">' + sel[i].n + '</span><span class="orem" onclick="removeItem(\'' + nm + '\')">x</span></div>';
+  }
+  document.getElementById("oItems").innerHTML = h;
+}
+function removeItem(n) {
+  var tmp = [];
+  for (var i = 0; i < sel.length; i++) { if (sel[i].n !== n) tmp.push(sel[i]); }
+  sel = tmp;
+  var cards = document.querySelectorAll(".card");
+  for (var i = 0; i < cards.length; i++) {
+    if (cards[i].getAttribute("data-n") === n) cards[i].classList.remove("picked");
+  }
+  updateBar();
+  if (sel.length === 0) closeOvl("ordOvl"); else buildReview();
+}
+function showSend() {
+  var base = window.location.origin + window.location.pathname;
+  var lines = "";
+  for (var i = 0; i < sel.length; i++) {
+    if (i > 0) lines += "\n\n";
+    lines += sel[i].e + " " + sel[i].n + "\n" + base + "?recipe=" + encodeURIComponent(sel[i].n);
+  }
+  document.getElementById("msgBox").value = "Lisa would like:\n\n" + lines + "\n\nThank you!";
+  document.getElementById("copyBtn").textContent = "Copy Message";
+  document.getElementById("copyBtn").classList.remove("done");
+  document.getElementById("revView").style.display = "none";
+  document.getElementById("sendView").classList.add("on");
+}
+function backToReview() {
+  document.getElementById("revView").style.display = "block";
+  document.getElementById("sendView").classList.remove("on");
+  buildReview();
+}
+function doCopy() {
+  var box = document.getElementById("msgBox");
+  var btn = document.getElementById("copyBtn");
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(box.value).then(function() { copied(btn); }).catch(function() { fallbackCopy(box, btn); });
+  } else { fallbackCopy(box, btn); }
+}
+function fallbackCopy(box, btn) {
+  box.removeAttribute("readonly");
+  box.select();
+  box.setSelectionRange(0, 99999);
+  try { document.execCommand("copy"); copied(btn); }
+  catch(e) { btn.textContent = "Select text above and copy manually"; }
+  box.setAttribute("readonly", true);
+  if (window.getSelection) window.getSelection().removeAllRanges();
+}
+function copied(btn) {
+  btn.textContent = "Copied! Now paste into Messenger";
+  btn.classList.add("done");
+  setTimeout(function() { btn.textContent = "Copy Message"; btn.classList.remove("done"); }, 4000);
+}
+function closeOvl(id) { document.getElementById(id).classList.remove("on"); }
+function bgClose(ev, id) { if (ev.target === document.getElementById(id)) closeOvl(id); }
+function resetAll() {
+  sel = [];
+  var cards = document.querySelectorAll(".card.picked");
+  for (var i = 0; i < cards.length; i++) cards[i].classList.remove("picked");
+  updateBar();
+  closeOvl("ordOvl");
+}
+function showRecipe(n) {
+  var r = R[n];
+  if (!r) return;
+  document.getElementById("rEm").textContent = r[0];
+  document.getElementById("rTitle").textContent = n;
+  var ih = "";
+  for (var i = 0; i < r[1].length; i++) ih += "<li>" + r[1][i] + "</li>";
+  document.getElementById("rIng").innerHTML = ih;
+  var sh = "";
+  for (var i = 0; i < r[2].length; i++) sh += '<li><div class="sn">' + (i+1) + '</div><div>' + r[2][i] + '</div></li>';
+  document.getElementById("rSteps").innerHTML = sh;
+  var tipEl = document.getElementById("rTip");
+  if (r[3]) { tipEl.textContent = r[3]; tipEl.style.display = "block"; }
+  else { tipEl.style.display = "none"; }
+  document.getElementById("recOvl").classList.add("on");
+}
+window.addEventListener("DOMContentLoaded", function() {
+  try {
+    var p = new URLSearchParams(window.location.search);
+    var rn = p.get("recipe");
+    if (rn) { setMode("care"); setTimeout(function() { showRecipe(rn); }, 150); }
+  } catch(e) {}
+});
+</script>
+</body>
+</html>
