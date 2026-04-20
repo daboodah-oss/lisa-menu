@@ -88,27 +88,6 @@ body.care .rh { display: block; }
 .sn { background: #1a4a7a; color: white; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
 .rtip { background: #e8f0fa; border-left: 3px solid #1a4a7a; border-radius: 0 8px 8px 0; padding: 10px 12px; font-size: 13px; color: #1a4a7a; margin-top: 14px; font-weight: 600; }
 .closebtn { width: 100%; background: #e8f0fa; color: #1a4a7a; border: none; border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 16px; }
-/* ORDER OUT TAB */
-.oo-note { background: #fff3e0; border-left: 3px solid #e07a20; border-radius: 0 8px 8px 0; padding: 9px 13px; font-size: 13px; color: #a04800; margin-bottom: 14px; font-weight: 600; }
-.oo-section { margin-bottom: 20px; }
-.oo-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #b06020; margin: 16px 0 8px 2px; }
-.oo-card { background: white; border-radius: 14px; padding: 14px 13px 12px; border: 2px solid #f0dcc8; box-shadow: 0 2px 8px rgba(180,100,20,0.07); margin-bottom: 10px; }
-.oo-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-.oo-em { font-size: 26px; flex-shrink: 0; }
-.oo-name { font-size: 15px; font-weight: 700; color: #2c3e2c; line-height: 1.2; }
-.oo-tag { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; margin-top: 3px; }
-.oo-tag.best { background: #d4edda; color: #1a5c2a; }
-.oo-tag.good { background: #e8f0e8; color: #3a6a3a; }
-.oo-tag.caution { background: #fff3cd; color: #856404; }
-.oo-order { font-size: 12px; color: #2c3e2c; margin-bottom: 5px; line-height: 1.5; }
-.oo-order b { color: #1a5c2a; }
-.oo-avoid { font-size: 11px; color: #8a4a00; background: #fff8f0; border-radius: 6px; padding: 5px 8px; margin-bottom: 9px; line-height: 1.5; }
-.oo-btns { display: flex; gap: 7px; flex-wrap: wrap; }
-.oo-btn { flex: 1; min-width: 100px; padding: 9px 8px; border-radius: 10px; border: none; font-size: 12px; font-weight: 700; cursor: pointer; text-align: center; text-decoration: none; display: inline-block; }
-.oo-btn.dd { background: #ff3008; color: white; }
-.oo-btn.app { background: #2c3e2c; color: white; }
-.oo-btn.carryout { background: #e8f0e8; color: #2c3e2c; }
-.oo-updated { text-align: center; font-size: 11px; color: #b0a090; margin-top: 6px; padding-bottom: 8px; }
 </style>
 </head>
 <body>
@@ -133,7 +112,6 @@ body.care .rh { display: block; }
   <div class="tab" onclick="go('sides',this)">Sides</div>
   <div class="tab" onclick="go('snacks',this)">Snacks</div>
   <div class="tab" onclick="go('drinks',this)">Drinks</div>
-  <div class="tab" onclick="go('orderout',this)">🛵 Order Out</div>
 </div>
 
 <!-- BREAKFAST -->
@@ -208,6 +186,9 @@ body.care .rh { display: block; }
   <div class="card" onclick="tap(this)" data-n="Mandarin Oranges" data-e="🍊"><div class="ck">✓</div><span class="ce">🍊</span><div class="cn">Mandarin Oranges</div><div class="rh">Tap for recipe</div></div>
   <div class="card" onclick="tap(this)" data-n="Hard-Boiled Egg" data-e="🥚"><div class="ck">✓</div><span class="ce">🥚</span><div class="cn">Hard-Boiled Egg</div><div class="rh">Tap for recipe</div></div>
   <div class="card" onclick="tap(this)" data-n="White Toast" data-e="🍞"><div class="ck">✓</div><span class="ce">🍞</span><div class="cn">Toast with Jelly</div><div class="cno">Light snack</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="Saltine Crackers" data-e="🍘"><div class="ck">✓</div><span class="ce">🍘</span><div class="cn">Saltine Crackers</div><div class="cno">Plain, easy on stomach</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="Outshine Mango Bar" data-e="🥭"><div class="ck">✓</div><span class="ce">🥭</span><div class="cn">Outshine Mango Bar</div><div class="cno">Frozen fruit bar</div><div class="rh">Tap for recipe</div></div>
+  <div class="card" onclick="tap(this)" data-n="Fudge Bar" data-e="🍫"><div class="ck">✓</div><span class="ce">🍫</span><div class="cn">Fudge Bar</div><div class="cno">Kroger, low fat</div><div class="rh">Tap for recipe</div></div>
 </div>
 </div>
 
@@ -220,149 +201,6 @@ body.care .rh { display: block; }
   <div class="card" onclick="tap(this)" data-n="Water" data-e="💧"><div class="ck">✓</div><span class="ce">💧</span><div class="cn">Water</div><div class="rh">Tap for recipe</div></div>
   <div class="card" onclick="tap(this)" data-n="Boost Shake" data-e="🥤"><div class="ck">✓</div><span class="ce">🥤</span><div class="cn">Boost Shake</div><div class="cno">Nutritional supplement</div><div class="rh">Tap for recipe</div></div>
 </div>
-</div>
-
-<!-- ORDER OUT -->
-<div class="sec" id="tab-orderout">
-<div class="oo-note">✅ = safe as described &nbsp;·&nbsp; ⚠️ = order carefully &nbsp;·&nbsp; Verified April 2026</div>
-
-<div class="oo-label">🏆 Best Picks</div>
-
-<div class="oo-card">
-  <div class="oo-header"><div class="oo-em">🥗</div><div><div class="oo-name">Chicken Salad Chick</div><span class="oo-tag best">✅ Best Overall</span></div></div>
-  <div class="oo-order"><b>Order:</b> Classic Carol on white bread (plain chicken salad, no chips). Olivia's Old South also fine.</div>
-  <div class="oo-avoid">⚠️ Skip: Fancy Nancy/Cranberry Kelli (nuts), any spicy or bacon varieties, chips on the side</div>
-  <div class="oo-btns">
-    <a class="oo-btn dd" href="https://www.doordash.com/store/chicken-salad-chick-fishers-1545227/" target="_blank">DoorDash</a>
-    <a class="oo-btn app" href="https://www.chickensaladchick.com/order" target="_blank">Order Online</a>
-  </div>
-</div>
-
-<div class="oo-card">
-  <div class="oo-header"><div class="oo-em">🥣</div><div><div class="oo-name">McAlister's Deli</div><span class="oo-tag best">✅ Best Soups</span></div></div>
-  <div class="oo-order"><b>Order:</b> Half turkey sandwich on white + cup of chicken noodle soup (Choose 2 combo). Roast turkey sandwich plain also great.</div>
-  <div class="oo-avoid">⚠️ Skip: McAlister's Club (has bacon), potato bacon soup, any loaded spud, broccoli cheddar (high fat)</div>
-  <div class="oo-btns">
-    <a class="oo-btn dd" href="https://www.doordash.com/store/mcalisters-deli-fishers-543752/" target="_blank">DoorDash</a>
-    <a class="oo-btn app" href="https://www.mcalistersdeli.com/order" target="_blank">Order Online</a>
-  </div>
-</div>
-
-<div class="oo-card">
-  <div class="oo-header"><div class="oo-em">🍞</div><div><div class="oo-name">Panera Bread</div><span class="oo-tag best">✅ Best Soups</span></div></div>
-  <div class="oo-order"><b>Order:</b> Cup of chicken noodle soup. Turkey sandwich on white or sourdough, no mayo, no extras. Open at 6 AM.</div>
-  <div class="oo-avoid">⚠️ Skip: Bread bowls, salads (raw veg/nuts), bacon items, avocado, broccoli cheddar soup (high fat)</div>
-  <div class="oo-btns">
-    <a class="oo-btn dd" href="https://www.doordash.com/store/panera-bread-fishers-543752/" target="_blank">DoorDash</a>
-    <a class="oo-btn app" href="https://www.panerabread.com/en-us/home.html" target="_blank">Order Online</a>
-  </div>
-</div>
-
-<div class="oo-label">🍗 Fast Food — Good Options</div>
-
-<div class="oo-card">
-  <div class="oo-header"><div class="oo-em">🐔</div><div><div class="oo-name">Chick-fil-A</div><span class="oo-tag best">✅ Best Fast Food</span></div></div>
-  <div class="oo-order"><b>Order:</b> Grilled Nuggets 8-pc (130 cal, 3g fat — the single best fast food item). Grilled Chicken Sandwich, no pickle, no sauce.</div>
-  <div class="oo-avoid">⚠️ Skip: Classic (fried) nuggets, anything spicy, mac & cheese side, milkshakes, waffle fries</div>
-  <div class="oo-btns">
-    <a class="oo-btn dd" href="https://www.doordash.com/store/chick-fil-a-noblesville-24432/" target="_blank">DoorDash</a>
-    <a class="oo-btn app" href="https://www.chick-fil-a.com/order" target="_blank">App / Order</a>
-  </div>
-</div>
-
-<div class="oo-card">
-  <div class="oo-header"><div class="oo-em">🍔</div><div><div class="oo-name">Wendy's</div><span class="oo-tag good">✅ Good</span></div></div>
-  <div class="oo-order"><b>Order:</b> Grilled Chicken Sandwich (no mayo). Plain Baked Potato (no toppings or light butter only). Jr. Hamburger plain.</div>
-  <div class="oo-avoid">⚠️ Skip: Frosty (ice cream — not allowed), Baconator, Dave's Double, any spicy option, chili (beans = high fiber)</div>
-  <div class="oo-btns">
-    <a class="oo-btn dd" href="https://www.doordash.com/store/wendys-noblesville-24432/" target="_blank">DoorDash</a>
-    <a class="oo-btn app" href="https://www.wendys.com/order" target="_blank">App / Order</a>
-  </div>
-</div>
-
-<div class="oo-card">
-  <div class="oo-header"><div class="oo-em">🍟</div><div><div class="oo-name">McDonald's</div><span class="oo-tag good">✅ Good</span></div></div>
-  <div class="oo-order"><b>Order:</b> Plain Hamburger (ketchup/mustard only, no cheese). Grilled Chicken Sandwich. Hotcakes plain (breakfast, no sausage).</div>
-  <div class="oo-avoid">⚠️ Skip: Big Mac, Quarter Pounder, McNuggets (fried), McFlurry/sundae, hash browns, sausage, bacon</div>
-  <div class="oo-btns">
-    <a class="oo-btn dd" href="https://www.doordash.com/store/mcdonalds-noblesville-24432/" target="_blank">DoorDash</a>
-    <a class="oo-btn app" href="https://www.mcdonalds.com/us/en-us/mobile-order-and-pay.html" target="_blank">App / Order</a>
-  </div>
-</div>
-
-<div class="oo-card">
-  <div class="oo-header"><div class="oo-em">🥖</div><div><div class="oo-name">Subway</div><span class="oo-tag good">✅ Good if careful</span></div></div>
-  <div class="oo-order"><b>Order:</b> 6" Turkey Breast or Oven-Roasted Chicken on WHITE bread. <b>NOT toasted.</b> Light mayo or mustard only — no raw veggie add-ons.</div>
-  <div class="oo-avoid">⚠️ Skip: Any toasted sub (makes bread crunchy), Italian, meatball marinara, oil &amp; vinegar, peppers/onions/pickles</div>
-  <div class="oo-btns">
-    <a class="oo-btn dd" href="https://www.doordash.com/store/subway-noblesville-24432/" target="_blank">DoorDash</a>
-    <a class="oo-btn app" href="https://www.subway.com/en-US/order" target="_blank">App / Order</a>
-  </div>
-</div>
-
-<div class="oo-card">
-  <div class="oo-header"><div class="oo-em">🥪</div><div><div class="oo-name">Potbelly</div><span class="oo-tag good">✅ Good if careful</span></div></div>
-  <div class="oo-order"><b>Order:</b> Turkey Breast or Chicken Salad on white bread — ask for <b>UNTOASTED</b> (they normally toast). Light mayo or mustard only.</div>
-  <div class="oo-avoid">⚠️ Skip: All toasted sandwiches, meatball sub, Italian, any with peppers or hot peppers</div>
-  <div class="oo-btns">
-    <a class="oo-btn dd" href="https://www.doordash.com/store/potbelly-noblesville-24432/" target="_blank">DoorDash</a>
-    <a class="oo-btn app" href="https://www.potbelly.com/order" target="_blank">App / Order</a>
-  </div>
-</div>
-
-<div class="oo-card">
-  <div class="oo-header"><div class="oo-em">🍔</div><div><div class="oo-name">Culver's</div><span class="oo-tag good">✅ Good</span></div></div>
-  <div class="oo-order"><b>Order:</b> Plain single ButterBurger — no cheese, ketchup/mustard only. Soft bun, lean patty. Mirrors hospital-approved hamburger.</div>
-  <div class="oo-avoid">⚠️ Skip: Cheese curds (fried), fish fry (fried), custard / ice cream (not allowed), anything fried</div>
-  <div class="oo-btns">
-    <a class="oo-btn carryout" href="https://www.culvers.com/order" target="_blank">Order / Carryout</a>
-  </div>
-</div>
-
-<div class="oo-card">
-  <div class="oo-header"><div class="oo-em">🍔</div><div><div class="oo-name">Five Guys</div><span class="oo-tag good">✅ Good</span></div></div>
-  <div class="oo-order"><b>Order:</b> Plain Hamburger — no cheese, no bacon. Ketchup, mustard, lettuce, tomato OK. Soft bun.</div>
-  <div class="oo-avoid">⚠️ Skip: Bacon burger, cheese, fries (fried)</div>
-  <div class="oo-btns">
-    <a class="oo-btn carryout" href="https://order.fiveguys.com/" target="_blank">Order / Carryout</a>
-  </div>
-</div>
-
-<div class="oo-label">⚠️ Order Carefully</div>
-
-<div class="oo-card">
-  <div class="oo-header"><div class="oo-em">🥩</div><div><div class="oo-name">Arby's</div><span class="oo-tag caution">⚠️ Caution</span></div></div>
-  <div class="oo-order"><b>Only safe order:</b> Plain Classic Roast Beef — no Arby's sauce, no horseradish. Small size. Lean meat on a soft bun.</div>
-  <div class="oo-avoid">⚠️ Skip: Beef & Cheddar (cheese not allowed), curly fries (fried + spiced), French Dip, Market Fresh sandwiches, loaded fries</div>
-  <div class="oo-btns">
-    <a class="oo-btn dd" href="https://www.doordash.com/store/arbys-noblesville-24432/" target="_blank">DoorDash</a>
-    <a class="oo-btn app" href="https://www.arbys.com/order" target="_blank">App / Order</a>
-  </div>
-</div>
-
-<div class="oo-label">🍕 Pizza &amp; Pasta</div>
-
-<div class="oo-card">
-  <div class="oo-header"><div class="oo-em">🍝</div><div><div class="oo-name">Chicago's Pizza (Fishers)</div><span class="oo-tag good">✅ Pasta is best</span></div></div>
-  <div class="oo-order"><b>Best order:</b> Spaghetti with marinara sauce — plain, no meatballs, no added cheese. Matches hospital-approved pasta. Also: thin crust plain cheese pizza, 1-2 slices only.</div>
-  <div class="oo-avoid">⚠️ Skip: Deep dish (too much fat), any meat toppings, extra cheese, garlic bread (buttery), stuffed pizza</div>
-  <div class="oo-btns">
-    <a class="oo-btn dd" href="https://www.doordash.com/store/chicagos-pizza-fishers-24432/" target="_blank">DoorDash</a>
-    <a class="oo-btn carryout" href="https://www.chicagospizzaoffishers.com/" target="_blank">Order / Carryout</a>
-  </div>
-</div>
-
-<div class="oo-card">
-  <div class="oo-header"><div class="oo-em">🍕</div><div><div class="oo-name">Domino's / Pizza Hut</div><span class="oo-tag caution">⚠️ Pizza: caution only</span></div></div>
-  <div class="oo-order"><b>If ordering pizza:</b> Thin crust only, plain cheese, light sauce, 1-2 slices max. Domino's Hand Tossed with light cheese is acceptable occasionally.</div>
-  <div class="oo-avoid">⚠️ Skip: Pan / deep dish, extra cheese, any meat toppings, stuffed crust, dipping sauces, bread sides</div>
-  <div class="oo-btns">
-    <a class="oo-btn dd" href="https://www.doordash.com/store/dominos-noblesville-24432/" target="_blank">Domino's DoorDash</a>
-    <a class="oo-btn dd" href="https://www.doordash.com/store/pizza-hut-noblesville-24432/" target="_blank">Pizza Hut DoorDash</a>
-  </div>
-</div>
-
-<div class="oo-updated">Last verified: April 2026 · Always confirm with your care team for new items</div>
 </div>
 
 <!-- ORDER BAR -->
@@ -446,7 +284,10 @@ var R = {
 "Boost Shake":["🥤",["Boost nutritional shake"],["Open the bottle. Serve with a straw if she prefers."],"Good between meals for extra nutrition."],
 "Milk":["🥛",["Milk — 2% or skim ONLY"],["Pour into a glass. Serve cold."],"2% or skim only — whole milk is too high in fat."],
 "Mango Juice":["🥭",["Simply Mango juice"],["Pour into a glass."],""],
-"Water":["💧",["Water"],["Pour into a glass. Add ice if she likes."],"Staying hydrated is important during recovery."]
+"Water":["💧",["Water"],["Pour into a glass. Add ice if she likes."],"Staying hydrated is important during recovery."],
+"Saltine Crackers":["🍘",["Saltine crackers"],["Open the sleeve. Serve a small stack on a plate.","Great alongside soup for dipping — softened in broth they are even gentler."],"Eat at a normal pace — eating too fast or dry can feel scratchy. Great paired with cottage cheese or soup."],
+"Outshine Mango Bar":["🥭",["Outshine Mango Fruit Bar (from freezer)"],["Take one bar from the freezer. Unwrap and serve."],"Pure fruit, no dairy, no prep. One of the best treats on this diet."],
+"Fudge Bar":["🍫",["Kroger Original Fudge Bar (from freezer)"],["Take one bar from the freezer. Unwrap and serve."],"Low fat fudge bar — limit to one at a time. The Outshine Mango Bar is the safer choice if she wants something cold and sweet."]
 };
 
 function tap(card) {
