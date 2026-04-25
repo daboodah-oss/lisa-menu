@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Bandera Kitchen</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: #faf6f0; color: #2a3328; padding-bottom: 110px; }
+header { background: #c44e2a; padding: 16px 14px 12px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.15); }
+.header-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+header h1 { font-size: 20px; color: white; font-weight: 800; letter-spacing: -0.01em; }
+header p { color: rgba(255,255,255,0.85); font-size: 12px; margin-top: 3px; }
+.mode-toggle { display: flex; background: rgba(0,0,0,0.22); border-radius: 20px; padding: 3px; gap: 2px; flex-shrink: 0; }
+.mode-btn { padding: 6px 14px; border-radius: 16px; border: none; font-size: 12px; font-weight: 700; cursor: pointer; background: transparent; color: rgba(255,255,255,0.78); }
+.mode-btn.active { background: white; color: #c44e2a; }
+body.cook header { background: #2c5e3f; }
+body.cook .mode-btn.active { color: #2c5e3f; }
+body.cook .tab.on { color: #2c5e3f; border-bottom-color: #2c5e3f; }
+body.cook .card.picked { border-color: #2c5e3f; background: #e6f0e6; }
+body.cook .card.picked .ck { background: #2c5e3f; }
+body.cook .snote { background: #e6f0e6; border-color: #2c5e3f; color: #2c5e3f; }
+body.cook .order-btn { background: #2c5e3f; }
+body.cook .order-btn .bdg { color: #2c5e3f; }
+body.cook .rh { display: block; }
+.tabs { display: flex; overflow-x: auto; background: white; border-bottom: 2px solid #ead8c4; padding: 0 6px; scrollbar-width: none; position: sticky; top: 76px; z-index: 90; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { flex-shrink: 0; padding: 12px 14px; font-size: 13px; font-weight: 700; color: #a08868; border-bottom: 3px solid transparent; cursor: pointer; white-space: nowrap; margin-bottom: -2px; letter-spacing: 0.01em; }
+.tab.on { color: #c44e2a; border-bottom-color: #c44e2a; }
+.sec { display: none; padding: 14px 12px 0; }
+.sec.on { display: block; }
+.snote { background: #fdeede; border-left: 3px solid #c44e2a; border-radius: 0 8px 8px 0; padding: 9px 13px; font-size: 13px; color: #8a3818; margin-bottom: 12px; font-weight: 600; }
+.sublabel { font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #a08868; margin: 16px 0 8px 2px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+
+/* Recipe / item cards */
+.card { background: white; border-radius: 14px; padding: 14px 12px; border: 2px solid #ead8c4; cursor: pointer; box-shadow: 0 2px 8px rgba(140,90,40,0.06); position: relative; user-select: none; -webkit-user-select: none; }
+.card.picked { border-color: #c44e2a; background: #fdeede; }
+.ck { position: absolute; top: 8px; right: 8px; width: 20px; height: 20px; border-radius: 50%; background: #c44e2a; color: white; font-size: 12px; line-height: 20px; text-align: center; opacity: 0; }
+.card.picked .ck { opacity: 1; }
+.ce { font-size: 24px; display: block; margin-bottom: 6px; }
+.cn { font-size: 13px; font-weight: 700; line-height: 1.3; }
+.cno { font-size: 11px; color: #a08868; margin-top: 3px; line-height: 1.4; }
+.rh { display: none; font-size: 11px; color: #2c5e3f; font-weight: 700; margin-top: 5px; }
+
+/* Recipe card metadata badges */
+.rmeta { display: flex; gap: 5px; margin-top: 6px; flex-wrap: wrap; }
+.rbadge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 9px; letter-spacing: 0.02em; }
+.rbadge.diff-easy { background: #e0f0d4; color: #3a6018; }
+.rbadge.diff-med { background: #fef0d4; color: #7a5414; }
+.rbadge.diff-hard { background: #fde0d4; color: #8a3818; }
+.rbadge.time { background: #ead8c4; color: #6a4828; }
+.rbadge.match { background: #c44e2a; color: white; }
+.rbadge.match.partial { background: #d68a3a; }
+.rbadge.match.low { background: #a08868; }
+
+/* Inventory section */
+.inv-toolbar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.inv-search { flex: 1; min-width: 180px; padding: 10px 12px; border-radius: 12px; border: 2px solid #ead8c4; font-size: 14px; background: white; color: #2a3328; }
+.inv-search:focus { outline: none; border-color: #c44e2a; }
+.inv-sort { padding: 10px 12px; border-radius: 12px; border: 2px solid #ead8c4; font-size: 13px; font-weight: 700; background: white; color: #2a3328; cursor: pointer; }
+.inv-list { display: flex; flex-direction: column; gap: 6px; }
+.inv-row { background: white; border: 2px solid #ead8c4; border-radius: 12px; padding: 11px 13px; display: flex; align-items: center; justify-content: space-between; gap: 10px; box-shadow: 0 1px 4px rgba(140,90,40,0.04); }
+.inv-name { font-weight: 700; font-size: 14px; color: #2a3328; }
+.inv-cat { font-size: 10px; color: #a08868; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-top: 2px; }
+.inv-date { font-size: 12px; color: #a08868; font-weight: 600; flex-shrink: 0; }
+.inv-empty { text-align: center; padding: 28px 14px; color: #a08868; font-size: 14px; }
+.inv-grouphead { font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #c44e2a; margin: 14px 0 6px 4px; }
+.inv-grouphead:first-child { margin-top: 4px; }
+
+/* Suggestions toolbar */
+.sug-toolbar { background: white; border: 2px solid #ead8c4; border-radius: 14px; padding: 10px 11px; margin-bottom: 12px; }
+.sug-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.sug-row + .sug-row { margin-top: 7px; padding-top: 7px; border-top: 1px solid #f0e3d3; }
+.sug-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #a08868; margin-right: 4px; }
+.chip { padding: 5px 10px; border-radius: 14px; border: 1.5px solid #ead8c4; background: white; font-size: 12px; font-weight: 700; color: #6a4828; cursor: pointer; }
+.chip.on { background: #c44e2a; color: white; border-color: #c44e2a; }
+.chip-toggle { display: inline-flex; background: #f4e8d4; border-radius: 14px; padding: 3px; gap: 2px; }
+.chip-toggle .chip { padding: 4px 11px; border: none; background: transparent; }
+.chip-toggle .chip.on { background: #c44e2a; color: white; }
+
+/* Shop tab */
+.shop-section { margin-bottom: 16px; }
+.shop-row { background: white; border: 2px solid #ead8c4; border-radius: 12px; padding: 12px 13px; display: flex; align-items: center; gap: 11px; cursor: pointer; user-select: none; -webkit-user-select: none; box-shadow: 0 1px 4px rgba(140,90,40,0.04); margin-bottom: 6px; }
+.shop-row.got { background: #e6f0e6; border-color: #2c5e3f; }
+.shop-box { width: 22px; height: 22px; border-radius: 6px; border: 2px solid #c0a888; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: 800; background: white; }
+.shop-row.got .shop-box { background: #2c5e3f; border-color: #2c5e3f; }
+.shop-text { flex: 1; }
+.shop-name-r { font-weight: 700; font-size: 14px; color: #2a3328; }
+.shop-row.got .shop-name-r { text-decoration: line-through; color: #a08868; }
+.shop-why-r { font-size: 11px; color: #a08868; margin-top: 2px; line-height: 1.4; }
+.shop-empty { text-align: center; padding: 18px 14px; color: #a08868; font-size: 13px; font-style: italic; }
+.shop-clear { background: transparent; border: 2px solid #ead8c4; color: #6a4828; border-radius: 10px; padding: 9px 14px; font-size: 13px; font-weight: 700; cursor: pointer; margin-top: 6px; }
+
+/* Order out */
+.oo-note { background: #fef0d4; border-left: 3px solid #d68a3a; border-radius: 0 8px 8px 0; padding: 9px 13px; font-size: 12px; color: #6a4828; margin-bottom: 14px; font-weight: 600; }
+.oo-label { font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #c44e2a; margin: 16px 0 8px 2px; }
+.oo-card { background: white; border-radius: 14px; padding: 14px 13px 12px; border: 2px solid #ead8c4; box-shadow: 0 2px 8px rgba(140,90,40,0.06); margin-bottom: 10px; }
+.oo-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.oo-em { font-size: 26px; flex-shrink: 0; }
+.oo-name { font-size: 15px; font-weight: 700; color: #2a3328; line-height: 1.2; }
+.oo-tag { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; margin-top: 3px; }
+.oo-tag.best { background: #fdeede; color: #8a3818; }
+.oo-tag.fam { background: #e6f0e6; color: #3a6018; }
+.oo-tag.quick { background: #fef0d4; color: #7a5414; }
+.oo-order { font-size: 12px; color: #2a3328; margin-bottom: 6px; line-height: 1.5; }
+.oo-order b { color: #8a3818; }
+.oo-btns { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 7px; }
+.oo-btn { flex: 1; min-width: 100px; padding: 9px 8px; border-radius: 10px; border: none; font-size: 12px; font-weight: 700; cursor: pointer; text-align: center; text-decoration: none; display: inline-block; }
+.oo-btn.dd { background: #ff3008; color: white; }
+.oo-btn.app { background: #2a3328; color: white; }
+.oo-btn.carryout { background: #ead8c4; color: #2a3328; }
+.oo-updated { text-align: center; font-size: 11px; color: #c0a888; margin-top: 8px; padding-bottom: 8px; }
+
+/* Order bar (Eat mode) */
+.obar { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid #ead8c4; padding: 12px 14px; z-index: 200; box-shadow: 0 -3px 12px rgba(0,0,0,0.08); }
+.order-btn { width: 100%; background: #c44e2a; color: white; border: none; border-radius: 14px; padding: 14px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.order-btn:disabled { background: #d8b8a8; }
+.bdg { background: white; color: #c44e2a; border-radius: 20px; padding: 2px 9px; font-size: 13px; font-weight: 800; }
+
+/* Overlays */
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 300; align-items: flex-end; }
+.overlay.on { display: flex; }
+.sheet { background: white; border-radius: 22px 22px 0 0; padding: 20px 16px 40px; width: 100%; max-height: 88vh; overflow-y: auto; }
+.handle { width: 40px; height: 4px; background: #ead8c4; border-radius: 2px; margin: 0 auto 16px; }
+.sheet h2 { font-size: 20px; font-weight: 800; margin-bottom: 4px; color: #2a3328; }
+.sheet p { font-size: 13px; color: #a08868; margin-bottom: 16px; }
+.oitem { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #ead8c4; }
+.oitem:last-child { border-bottom: none; }
+.oem { font-size: 20px; }
+.onm { font-weight: 600; font-size: 14px; flex: 1; color: #2a3328; }
+.orem { color: #c0a888; font-size: 22px; cursor: pointer; padding: 4px 8px; }
+.btns { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+.btn-g { background: #c44e2a; color: white; border: none; border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; }
+.btn-s { background: #fdeede; color: #c44e2a; border: none; border-radius: 12px; padding: 13px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; }
+.sendview { display: none; }
+.sendview.on { display: block; }
+.sendhead { text-align: center; margin-bottom: 14px; }
+.sendicon { font-size: 42px; }
+.instruct { background: #fef0d4; border: 1px solid #f0d8a4; border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; font-size: 13px; color: #6a4828; }
+.instruct b { display: block; margin-bottom: 6px; font-size: 14px; }
+.istep { display: flex; gap: 8px; margin-top: 7px; align-items: flex-start; }
+.istepn { background: #c44e2a; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+.msgbox { width: 100%; background: #fdeede; border: 2px solid #f0c8a8; border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 600; line-height: 1.7; color: #2a3328; resize: none; min-height: 110px; margin-bottom: 10px; -webkit-user-select: all; user-select: all; }
+.msgbox:focus { outline: none; }
+.copybtn { width: 100%; background: #c44e2a; color: white; border: none; border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; margin-bottom: 10px; }
+.copybtn.done { background: #2c5e3f; }
+
+/* Recipe overlay */
+.rmovl { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 400; align-items: flex-end; }
+.rmovl.on { display: flex; }
+.rsheet { background: white; border-radius: 22px 22px 0 0; padding: 20px 16px 48px; width: 100%; max-height: 88vh; overflow-y: auto; }
+.rhead { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.rem { font-size: 38px; }
+.rtitle { font-size: 19px; font-weight: 800; color: #2c5e3f; line-height: 1.2; }
+.rsub { font-size: 12px; color: #a08868; margin-bottom: 10px; }
+.rmetabar { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.rlabel { font-size: 10px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #2c5e3f; margin: 14px 0 6px; }
+.ilist { list-style: none; }
+.ilist li { padding: 7px 0; border-bottom: 1px solid #ead8c4; font-size: 14px; font-weight: 600; display: flex; gap: 8px; align-items: center; color: #2a3328; }
+.ilist li:last-child { border-bottom: none; }
+.ilist li::before { content: "·"; color: #2c5e3f; font-size: 22px; line-height: 1; flex-shrink: 0; }
+.ilist li.miss { color: #a08868; }
+.ilist li.miss::before { content: "○"; font-size: 13px; color: #c0a888; }
+.ilist li.miss::after { content: "need"; font-size: 9px; background: #ead8c4; color: #6a4828; padding: 2px 6px; border-radius: 6px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; margin-left: auto; }
+.slist { list-style: none; }
+.slist li { display: flex; gap: 10px; padding: 9px 0; border-bottom: 1px solid #ead8c4; font-size: 14px; line-height: 1.5; color: #2a3328; }
+.slist li:last-child { border-bottom: none; }
+.sn { background: #2c5e3f; color: white; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+.rtip { background: #e6f0e6; border-left: 3px solid #2c5e3f; border-radius: 0 8px 8px 0; padding: 10px 12px; font-size: 13px; color: #2c5e3f; margin-top: 14px; font-weight: 600; }
+.rsource { font-size: 11px; color: #a08868; margin-top: 14px; text-align: center; }
+.rsource a { color: #c44e2a; font-weight: 700; }
+.closebtn { width: 100%; background: #fdeede; color: #c44e2a; border: none; border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 16px; }
+
+/* Web link cards */
+.weblink-card { background: linear-gradient(135deg, #fdeede 0%, #fef0d4 100%); border: 2px solid #f0c8a8; border-radius: 14px; padding: 13px 14px; margin-bottom: 8px; text-decoration: none; display: block; box-shadow: 0 2px 8px rgba(140,90,40,0.06); }
+.weblink-em { font-size: 22px; margin-right: 8px; }
+.weblink-name { font-size: 14px; font-weight: 700; color: #2a3328; display: inline-block; }
+.weblink-desc { font-size: 12px; color: #6a4828; margin-top: 4px; line-height: 1.4; }
+
+/* Empty state */
+.empty-card { background: white; border: 2px dashed #ead8c4; border-radius: 14px; padding: 28px 18px; text-align: center; color: #a08868; }
+.empty-em { font-size: 36px; margin-bottom: 8px; display: block; }
+.empty-msg { font-size: 14px; line-height: 1.5; }
+
+/* Footer */
+.foot { text-align: center; padding: 14px 12px 6px; font-size: 11px; color: #c0a888; font-style: italic; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div>
+      <h1 id="htitle">Bandera Kitchen</h1>
+      <p id="hsub">Tap what sounds good — we'll take care of the rest</p>
+    </div>
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="eatBtn" onclick="setMode('eat')">Eat</button>
+      <button class="mode-btn" id="cookBtn" onclick="setMode('cook')">Cook</button>
+    </div>
+  </div>
+</header>
+
+<div class="tabs">
+  <div class="tab on" onclick="go('inventory',this)">📦 Inventory</div>
+  <div class="tab" onclick="go('suggestions',this)">✨ Suggestions</div>
+  <div class="tab" onclick="go('cook',this)">👨‍🍳 Cook</div>
+  <div class="tab" onclick="go('shop',this)">🛒 Shop</div>
+  <div class="tab" onclick="go('orderout',this)">🛵 Order Out</div>
+</div>
+
+<!-- INVENTORY TAB -->
+<div class="sec on" id="tab-inventory">
+<div class="snote">📋 What's in our kitchen right now</div>
+<div class="inv-toolbar">
+  <input type="text" class="inv-search" id="invSearch" placeholder="Search inventory..." oninput="renderInv()">
+  <select class="inv-sort" id="invSort" onchange="renderInv()">
+    <option value="cat">By Category</option>
+    <option value="name">A → Z</option>
+    <option value="namedesc">Z → A</option>
+    <option value="datenew">Newest</option>
+    <option value="dateold">Oldest</option>
+  </select>
+</div>
+<div class="inv-list" id="invList"></div>
+</div>
+
+<!-- SUGGESTIONS TAB -->
+<div class="sec" id="tab-suggestions">
+<div class="snote">✨ Recipe ideas based on what you have</div>
+<div class="sug-toolbar">
+  <div class="sug-row">
+    <span class="sug-label">Match:</span>
+    <div class="chip-toggle" id="matchToggle">
+      <span class="chip on" data-match="all" onclick="setMatch('all')">All recipes</span>
+      <span class="chip" data-match="strict" onclick="setMatch('strict')">In stock only</span>
+    </div>
+  </div>
+  <div class="sug-row">
+    <span class="sug-label">Meal:</span>
+    <span class="chip on" data-meal="any" onclick="toggleFilter('meal','any',this)">Any</span>
+    <span class="chip" data-meal="breakfast" onclick="toggleFilter('meal','breakfast',this)">Breakfast</span>
+    <span class="chip" data-meal="lunch" onclick="toggleFilter('meal','lunch',this)">Lunch</span>
+    <span class="chip" data-meal="dinner" onclick="toggleFilter('meal','dinner',this)">Dinner</span>
+    <span class="chip" data-meal="snack" onclick="toggleFilter('meal','snack',this)">Snack</span>
+  </div>
+  <div class="sug-row">
+    <span class="sug-label">Difficulty:</span>
+    <span class="chip on" data-diff="any" onclick="toggleFilter('diff','any',this)">Any</span>
+    <span class="chip" data-diff="easy" onclick="toggleFilter('diff','easy',this)">Easy</span>
+    <span class="chip" data-diff="med" onclick="toggleFilter('diff','med',this)">Medium</span>
+    <span class="chip" data-diff="hard" onclick="toggleFilter('diff','hard',this)">Hard</span>
+  </div>
+  <div class="sug-row">
+    <span class="sug-label">Time:</span>
+    <span class="chip on" data-time="any" onclick="toggleFilter('time','any',this)">Any</span>
+    <span class="chip" data-time="15" onclick="toggleFilter('time','15',this)">≤15 min</span>
+    <span class="chip" data-time="30" onclick="toggleFilter('time','30',this)">≤30 min</span>
+    <span class="chip" data-time="60" onclick="toggleFilter('time','60',this)">≤1 hr</span>
+  </div>
+</div>
+<div id="sugGrid" class="grid"></div>
+<div class="sublabel">Browse more on the web</div>
+<a class="weblink-card" href="https://www.allrecipes.com/recipes/17562/dinner/" target="_blank">
+  <span class="weblink-em">🌐</span><span class="weblink-name">AllRecipes — Top dinners</span>
+  <div class="weblink-desc">Most popular family dinner recipes, sortable by rating and prep time.</div>
+</a>
+<a class="weblink-card" href="https://cooking.nytimes.com/topics/easy-weeknight-dinners" target="_blank">
+  <span class="weblink-em">📰</span><span class="weblink-name">NYT Cooking — Easy weeknight</span>
+  <div class="weblink-desc">Tested weeknight recipes with reviews. Some require subscription.</div>
+</a>
+<a class="weblink-card" href="https://www.budgetbytes.com/category/recipes/" target="_blank">
+  <span class="weblink-em">💰</span><span class="weblink-name">Budget Bytes</span>
+  <div class="weblink-desc">Simple, family-friendly recipes designed to be affordable and easy.</div>
+</a>
+<a class="weblink-card" href="https://www.seriouseats.com/recipes" target="_blank">
+  <span class="weblink-em">🔬</span><span class="weblink-name">Serious Eats</span>
+  <div class="weblink-desc">Recipes built on technique and testing. Great when you want to know <i>why</i>.</div>
+</a>
+</div>
+
+<!-- COOK TAB -->
+<div class="sec" id="tab-cook">
+<div class="snote">👨‍🍳 Tap any recipe to see how to make it</div>
+<div id="cookGrid" class="grid"></div>
+</div>
+
+
+<!-- SHOP TAB -->
+<div class="sec" id="tab-shop">
+<div class="snote">🛒 Shopping list — tap to check off as you shop</div>
+
+<div class="shop-section">
+  <div class="sublabel">Auto-suggested staples</div>
+  <div id="shopAuto"></div>
+</div>
+
+<div class="shop-section">
+  <div class="sublabel">Manual list</div>
+  <div id="shopManual"></div>
+  <div class="shop-empty" id="shopManualEmpty" style="display:none;">No manual items right now.</div>
+</div>
+
+<button class="shop-clear" onclick="clearShopChecks()">Uncheck all</button>
+<p class="foot">Items below are everyday staples worth keeping stocked. Check-offs save on this device only.</p>
+</div>
+
+<!-- ORDER OUT TAB -->
+<div class="sec" id="tab-orderout">
+<div class="oo-note">🏠 Family-friendly local picks for Fishers / Noblesville · Verified April 2026</div>
+
+<div class="oo-label">🏆 Best Picks</div>
+
+<div class="oo-card">
+  <div class="oo-header"><div class="oo-em">🥪</div><div><div class="oo-name">McAlister's Deli</div><span class="oo-tag fam">✅ Family Favorite</span></div></div>
+  <div class="oo-order"><b>Try:</b> Choose Two combo (half sandwich + cup of soup or salad). McAlister's Club, Spud Max, French Dip. Their sweet tea is famous.</div>
+  <div class="oo-btns">
+    <a class="oo-btn dd" href="https://www.doordash.com/store/mcalister's-deli-fishers-27283/" target="_blank">DoorDash</a>
+    <a class="oo-btn app" href="https://www.mcalistersdeli.com/order" target="_blank">Order Online</a>
+  </div>
+</div>
+
+<div class="oo-card">
+  <div class="oo-header"><div class="oo-em">🐔</div><div><div class="oo-name">Chick-fil-A</div><span class="oo-tag best">✅ Reliable</span></div></div>
+  <div class="oo-order"><b>Try:</b> Spicy Deluxe sandwich, Chicken Sandwich, 12-pc Nuggets. Mac & Cheese is excellent. Frosted Lemonade for dessert.</div>
+  <div class="oo-btns">
+    <a class="oo-btn dd" href="https://www.doordash.com/store/chick-fil-a-noblesville-173370/" target="_blank">DoorDash</a>
+    <a class="oo-btn app" href="https://www.chick-fil-a.com/order" target="_blank">App / Order</a>
+  </div>
+</div>
+
+<div class="oo-card">
+  <div class="oo-header"><div class="oo-em">🍕</div><div><div class="oo-name">Chicago's Pizza (Fishers)</div><span class="oo-tag best">✅ Best Pizza</span></div></div>
+  <div class="oo-order"><b>Try:</b> Deep dish or stuffed pizza is the move. Italian beef sandwich, garlic bread. A solid local spot, not chain pizza.</div>
+  <div class="oo-btns">
+    <a class="oo-btn dd" href="https://www.doordash.com/store/chicago's-pizza-fishers-573302/" target="_blank">DoorDash</a>
+    <a class="oo-btn carryout" href="https://www.chicagospizzaoffishers.com/" target="_blank">Order / Carryout</a>
+  </div>
+</div>
+
+<div class="oo-label">🍔 Burgers & Comfort</div>
+
+<div class="oo-card">
+  <div class="oo-header"><div class="oo-em">🌭</div><div><div class="oo-name">Portillo's Fishers</div><span class="oo-tag fam">✅ Family Favorite</span></div></div>
+  <div class="oo-order"><b>Try:</b> Italian Beef (dipped), Chicago Dog, Char-Grilled Burger, cheese fries. Chocolate cake shake is a must.</div>
+  <div class="oo-btns">
+    <a class="oo-btn dd" href="https://www.doordash.com/store/portillos-fishers/" target="_blank">DoorDash</a>
+    <a class="oo-btn app" href="https://www.portillos.com/order/" target="_blank">App / Order</a>
+  </div>
+</div>
+
+<div class="oo-card">
+  <div class="oo-header"><div class="oo-em">🍔</div><div><div class="oo-name">Culver's</div><span class="oo-tag fam">✅ Family Favorite</span></div></div>
+  <div class="oo-order"><b>Try:</b> ButterBurger Deluxe, Wisconsin Cheese Curds, Chicken Tenders. Frozen Custard Concrete — Flavor of the Day rotates.</div>
+  <div class="oo-btns">
+    <a class="oo-btn carryout" href="https://www.culvers.com/order" target="_blank">Order / Carryout</a>
+  </div>
+</div>
+
+<div class="oo-card">
+  <div class="oo-header"><div class="oo-em">🍔</div><div><div class="oo-name">Five Guys</div><span class="oo-tag best">✅ Solid</span></div></div>
+  <div class="oo-order"><b>Try:</b> Cheeseburger with all the toppings (free), Cajun fries, milkshake with mix-ins.</div>
+  <div class="oo-btns">
+    <a class="oo-btn carryout" href="https://order.fiveguys.com/" target="_blank">Order / Carryout</a>
+  </div>
+</div>
+
+<div class="oo-label">🥡 Asian</div>
+
+<div class="oo-card">
+  <div class="oo-header"><div class="oo-em">🍣</div><div><div class="oo-name">Wild Ginger on 116th</div><span class="oo-tag best">✅ Best Sushi</span></div></div>
+  <div class="oo-order"><b>Try:</b> Premium rolls (Mangolicious, Crab Rangoon Roll), salmon nigiri, miso soup. Family-run, generous portions.</div>
+  <div class="oo-btns">
+    <a class="oo-btn dd" href="https://www.doordash.com/store/wild-ginger-on-116th-fishers/" target="_blank">DoorDash</a>
+  </div>
+</div>
+
+<div class="oo-card">
+  <div class="oo-header"><div class="oo-em">🍜</div><div><div class="oo-name">JINYA Ramen Bar</div><span class="oo-tag best">✅ Solid</span></div></div>
+  <div class="oo-order"><b>Try:</b> Tonkotsu Black, Spicy Chicken Ramen, Impossible Bowl (vegan). Pork buns and gyoza for shared starters.</div>
+  <div class="oo-btns">
+    <a class="oo-btn dd" href="https://www.doordash.com/store/jinya-ramen-bar-fishers/" target="_blank">DoorDash</a>
+  </div>
+</div>
+
+<div class="oo-label">🌮 Mexican</div>
+
+<div class="oo-card">
+  <div class="oo-header"><div class="oo-em">🌮</div><div><div class="oo-name">Verde Flavors of Mexico</div><span class="oo-tag fam">✅ Family Favorite</span></div></div>
+  <div class="oo-order"><b>Try:</b> Street tacos, fajitas, enchiladas verdes, queso fundido. Authentic, generous portions.</div>
+  <div class="oo-btns">
+    <a class="oo-btn dd" href="https://www.doordash.com/store/verde-flavors-of-mexico-fishers/" target="_blank">DoorDash</a>
+  </div>
+</div>
+
+<div class="oo-card">
+  <div class="oo-header"><div class="oo-em">🌶️</div><div><div class="oo-name">Torchy's Tacos</div><span class="oo-tag best">✅ Solid</span></div></div>
+  <div class="oo-order"><b>Try:</b> Trailer Park (with mom), Brushfire, Democrat. Queso is famous. Migas tacos for breakfast.</div>
+  <div class="oo-btns">
+    <a class="oo-btn dd" href="https://www.doordash.com/store/torchys-tacos-fishers/" target="_blank">DoorDash</a>
+    <a class="oo-btn app" href="https://torchystacos.com/order/" target="_blank">App / Order</a>
+  </div>
+</div>
+
+<div class="oo-label">🥞 Breakfast & Brunch</div>
+
+<div class="oo-card">
+  <div class="oo-header"><div class="oo-em">🥞</div><div><div class="oo-name">The Original Pancake House</div><span class="oo-tag fam">✅ Family Favorite</span></div></div>
+  <div class="oo-order"><b>Try:</b> Apple Pancake (signature), Dutch Baby, German Pancake, classic three-egg omelets. Worth the wait on weekends.</div>
+  <div class="oo-btns">
+    <a class="oo-btn carryout" href="https://www.originalpancakehouse.com/locations/" target="_blank">Locations</a>
+  </div>
+</div>
+
+<div class="oo-card">
+  <div class="oo-header"><div class="oo-em">🍳</div><div><div class="oo-name">Wild Eggs</div><span class="oo-tag fam">✅ Family Favorite</span></div></div>
+  <div class="oo-order"><b>Try:</b> Kelsey's Goetta Skillet, Surfin' Bird, Cinful French Toast. Bottomless coffee.</div>
+  <div class="oo-btns">
+    <a class="oo-btn dd" href="https://www.doordash.com/store/wild-eggs-fishers/" target="_blank">DoorDash</a>
+  </div>
+</div>
+
+<div class="oo-label">🍝 Italian & Pizza</div>
+
+<div class="oo-card">
+  <div class="oo-header"><div class="oo-em">🍝</div><div><div class="oo-name">Sangiovese Ristorante</div><span class="oo-tag best">✅ Top Italian</span></div></div>
+  <div class="oo-order"><b>Try:</b> Veal Parmesan, Lobster Ravioli, Filet Tips. Their bread is legendary. Date-night quality, family welcome.</div>
+  <div class="oo-btns">
+    <a class="oo-btn carryout" href="https://www.sangiovesefishers.com/" target="_blank">Order / Carryout</a>
+  </div>
+</div>
+
+<div class="oo-card">
+  <div class="oo-header"><div class="oo-em">🍕</div><div><div class="oo-name">Domino's / Pizza Hut</div><span class="oo-tag quick">⚡ Quick & Easy</span></div></div>
+  <div class="oo-order"><b>Try:</b> Whatever the kids vote for. Hand-tossed cheese, pepperoni, BBQ chicken. Add wings or breadsticks.</div>
+  <div class="oo-btns">
+    <a class="oo-btn dd" href="https://www.doordash.com/en/store/33934717" target="_blank">Domino's DoorDash</a>
+    <a class="oo-btn dd" href="https://www.doordash.com/store/pizza-hut-noblesville-23564882/" target="_blank">Pizza Hut DoorDash</a>
+  </div>
+</div>
+
+<div class="oo-label">⚡ Fast & Easy</div>
+
+<div class="oo-card">
+  <div class="oo-header"><div class="oo-em">🥗</div><div><div class="oo-name">Chicken Salad Chick</div><span class="oo-tag quick">⚡ Quick & Easy</span></div></div>
+  <div class="oo-order"><b>Try:</b> Trio (3 chicken salad scoops), Classic Carol, Fancy Nancy, Olivia's Old South, Buffalo Barclay. Broccoli salad on the side.</div>
+  <div class="oo-btns">
+    <a class="oo-btn dd" href="https://www.doordash.com/store/chicken-salad-chick-fishers-2057433/" target="_blank">DoorDash</a>
+    <a class="oo-btn app" href="https://www.chickensaladchick.com/order" target="_blank">Order Online</a>
+  </div>
+</div>
+
+<div class="oo-card">
+  <div class="oo-header"><div class="oo-em">🥖</div><div><div class="oo-name">Panera Bread</div><span class="oo-tag quick">⚡ Quick & Easy</span></div></div>
+  <div class="oo-order"><b>Try:</b> Broccoli Cheddar in a bread bowl, You Pick Two combos, Mac & Cheese, Modern Greek Salad. Bagels in the morning.</div>
+  <div class="oo-btns">
+    <a class="oo-btn dd" href="https://www.doordash.com/store/panera-bread-fishers-543752/" target="_blank">DoorDash</a>
+    <a class="oo-btn app" href="https://www.panerabread.com/" target="_blank">Order Online</a>
+  </div>
+</div>
+
+<div class="oo-card">
+  <div class="oo-header"><div class="oo-em">🍔</div><div><div class="oo-name">Wendy's</div><span class="oo-tag quick">⚡ Quick & Easy</span></div></div>
+  <div class="oo-order"><b>Try:</b> Dave's Double, Spicy Chicken Sandwich, Baconator, Frosty (chocolate or vanilla), chili. 4 for $4 if budget matters.</div>
+  <div class="oo-btns">
+    <a class="oo-btn dd" href="https://www.doordash.com/store/wendys-noblesville-23773830/" target="_blank">DoorDash</a>
+    <a class="oo-btn app" href="https://www.wendys.com/order" target="_blank">App / Order</a>
+  </div>
+</div>
+
+<div class="oo-updated">Last verified: April 2026 · Order Out is for browsing only and does not save selections</div>
+</div>
+
+<!-- ORDER BAR -->
+<div class="obar" id="obar">
+  <button class="order-btn" id="oBtn" onclick="openOrder()" disabled>
+    <span id="oLbl">My Selections</span>
+    <span class="bdg" id="oCnt">0</span>
+  </button>
+</div>
+
+<!-- ORDER OVERLAY -->
+<div class="overlay" id="ordOvl" onclick="bgClose(event,'ordOvl')">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div id="revView">
+      <h2>Your Selections</h2>
+      <p>Tap × to remove anything, then press Send.</p>
+      <div id="oItems"></div>
+      <div class="btns">
+        <button class="btn-g" onclick="showSend()">Send My Request</button>
+        <button class="btn-s" onclick="closeOvl('ordOvl')">Keep Browsing</button>
+      </div>
+    </div>
+    <div class="sendview" id="sendView">
+      <div class="sendhead"><div class="sendicon">📋</div><h2>Ready to Send!</h2><p>Copy and paste into Messenger.</p></div>
+      <div class="instruct">
+        <b>3 easy steps:</b>
+        <div class="istep"><div class="istepn">1</div><div>Tap <b>Copy Message</b> below</div></div>
+        <div class="istep"><div class="istepn">2</div><div>Open <b>Messenger</b> and go to the family group</div></div>
+        <div class="istep"><div class="istepn">3</div><div>Long-press the text field, tap <b>Paste</b>, then Send</div></div>
+      </div>
+      <textarea class="msgbox" id="msgBox" readonly></textarea>
+      <button class="copybtn" id="copyBtn" onclick="doCopy()">Copy Message</button>
+      <button class="btn-s" onclick="backToReview()">Edit Selections</button>
+      <br><br>
+      <button class="btn-s" onclick="resetAll()">Start Over</button>
+    </div>
+  </div>
+</div>
+
+<!-- RECIPE OVERLAY -->
+<div class="rmovl" id="recOvl" onclick="bgClose(event,'recOvl')">
+  <div class="rsheet">
+    <div class="handle"></div>
+    <div class="rhead">
+      <div class="rem" id="rEm"></div>
+      <div>
+        <div class="rtitle" id="rTitle"></div>
+        <div class="rsub" id="rSub"></div>
+      </div>
+    </div>
+    <div class="rmetabar" id="rMetaBar"></div>
+    <div class="rlabel">Ingredients</div>
+    <ul class="ilist" id="rIng"></ul>
+    <div class="rlabel">Steps</div>
+    <ol class="slist" id="rSteps"></ol>
+    <div class="rtip" id="rTip" style="display:none"></div>
+    <div class="rsource" id="rSource" style="display:none"></div>
+    <button class="closebtn" onclick="closeOvl('recOvl')">Done</button>
+  </div>
+</div>
+
+
+<script>
+/* ============================================================
+   BANDERA KITCHEN
+   Static site, read-only inventory, localStorage for per-device state
+   Allergies: no peanuts (Michael), no bananas (Lisa)
+   Household: 4 people
+   ============================================================ */
+
+/* ---------- INVENTORY (canonical, baked-in) ----------
+   Format: { name, cat, added (YYYY-MM-DD), tags (for matching) }
+   tags are normalized lowercase keywords used to match recipe ingredients */
+var INVENTORY = [
+  // Proteins
+  {name:"Eggs", cat:"Proteins", added:"2026-04-19", tags:["egg","eggs"]},
+  {name:"Buddig Honey Roasted Turkey", cat:"Proteins", added:"2026-04-19", tags:["turkey","deli turkey","lunch meat"]},
+  {name:"Buddig Honey Ham", cat:"Proteins", added:"2026-04-19", tags:["ham","deli ham","lunch meat"]},
+  {name:"Boost Nutritional Shakes", cat:"Proteins", added:"2026-04-19", tags:["boost","shake"]},
+
+  // Dairy
+  {name:"2% Milk", cat:"Dairy", added:"2026-04-19", tags:["milk"]},
+  {name:"Skim Milk", cat:"Dairy", added:"2026-04-19", tags:["milk","skim milk"]},
+  {name:"Cottage Cheese", cat:"Dairy", added:"2026-04-19", tags:["cottage cheese"]},
+  {name:"Butter / Margarine", cat:"Dairy", added:"2026-04-19", tags:["butter","margarine"]},
+
+  // Breads & Grains
+  {name:"Wonder White Bread", cat:"Breads & Grains", added:"2026-04-19", tags:["bread","white bread"]},
+  {name:"Artesano Brioche Bread", cat:"Breads & Grains", added:"2026-04-19", tags:["bread","brioche"]},
+  {name:"King's Hawaiian Sweet Rolls", cat:"Breads & Grains", added:"2026-04-19", tags:["rolls","sweet rolls","hawaiian rolls","slider buns"]},
+  {name:"Bisquick Pancake Mix", cat:"Breads & Grains", added:"2026-04-19", tags:["bisquick","pancake mix","baking mix"]},
+  {name:"Creamette White Spaghetti", cat:"Breads & Grains", added:"2026-04-19", tags:["spaghetti","pasta"]},
+  {name:"Mrs. Weiss' Egg Noodles", cat:"Breads & Grains", added:"2026-04-19", tags:["egg noodles","noodles","pasta"]},
+  {name:"Saltine Crackers", cat:"Breads & Grains", added:"2026-04-19", tags:["crackers","saltines"]},
+
+  // Soups & Broths
+  {name:"Kroger Fat-Free Chicken Broth", cat:"Soups & Broths", added:"2026-04-19", tags:["chicken broth","broth","stock"]},
+  {name:"Campbell's Double Noodle Soup", cat:"Soups & Broths", added:"2026-04-19", tags:["soup","canned soup"]},
+
+  // Fruits & Vegetables
+  {name:"Mott's Applesauce", cat:"Fruits & Vegetables", added:"2026-04-19", tags:["applesauce","apple"]},
+  {name:"Mandarin Oranges (canned)", cat:"Fruits & Vegetables", added:"2026-04-19", tags:["mandarin oranges","oranges","canned fruit"]},
+  {name:"Del Monte Cut Green Beans (canned)", cat:"Fruits & Vegetables", added:"2026-04-19", tags:["green beans","canned green beans"]},
+
+  // Condiments
+  {name:"Ketchup", cat:"Condiments", added:"2026-04-19", tags:["ketchup"]},
+  {name:"Mustard", cat:"Condiments", added:"2026-04-19", tags:["mustard"]},
+  {name:"Mrs. Butterworth's Original Syrup", cat:"Condiments", added:"2026-04-19", tags:["syrup","pancake syrup","maple syrup"]},
+
+  // Beverages
+  {name:"Simply Mango Juice", cat:"Beverages", added:"2026-04-19", tags:["mango juice","juice"]},
+  {name:"Water", cat:"Beverages", added:"2026-04-19", tags:["water"]},
+
+  // Frozen
+  {name:"Outshine Mango Fruit Bars", cat:"Frozen", added:"2026-04-19", tags:["mango bar","fruit bar","popsicle"]},
+  {name:"Kroger Original Fudge Bars", cat:"Frozen", added:"2026-04-19", tags:["fudge bar","frozen treat"]}
+];
+
+/* ---------- INVENTORY HELPERS ---------- */
+function hasInInventory(ingredientTag) {
+  var t = (ingredientTag||"").toLowerCase().trim();
+  for (var i=0; i<INVENTORY.length; i++) {
+    var tags = INVENTORY[i].tags;
+    for (var j=0; j<tags.length; j++) {
+      if (tags[j] === t) return true;
+    }
+  }
+  return false;
+}
+
+/* ---------- RECIPES ----------
+   Each recipe:
+   - id: unique short id
+   - name, emoji, sub (one-line description)
+   - meal: breakfast | lunch | dinner | snack
+   - diff: easy | med | hard
+   - timeMin: total time in minutes
+   - serves: how many it serves (used for the "scaled for 4" note)
+   - ingredients: array of { name (display), tag (for matching, lowercase), pantry (true if probably already on hand even if not flagged) }
+   - steps: array of strings
+   - tip: optional cooking tip
+   - source: optional { name, url }
+*/
+var RECIPES = [
+  // ===== BREAKFAST =====
+  {
+    id:"r-pancakes", name:"Bisquick Pancakes", emoji:"🥞",
+    sub:"Classic family breakfast", meal:"breakfast",
+    diff:"easy", timeMin:15, serves:4,
+    ingredients:[
+      {name:"2 cups Bisquick mix", tag:"bisquick"},
+      {name:"1 cup milk", tag:"milk"},
+      {name:"2 eggs", tag:"egg"},
+      {name:"Butter for the pan", tag:"butter"},
+      {name:"Syrup for serving", tag:"syrup"}
+    ],
+    steps:[
+      "Whisk Bisquick, milk, and eggs in a bowl until mostly smooth — small lumps are fine.",
+      "Heat a skillet on medium with a small pat of butter.",
+      "Pour 1/4 cup of batter per pancake. Cook until bubbles pop on top and edges look dry, about 2 min.",
+      "Flip and cook 1 more minute until golden. Serve with butter and syrup."
+    ],
+    tip:"Medium heat is key — high heat burns the outside before the inside cooks."
+  },
+  {
+    id:"r-french-toast", name:"French Toast", emoji:"🍞",
+    sub:"Brioche makes it next-level", meal:"breakfast",
+    diff:"easy", timeMin:15, serves:4,
+    ingredients:[
+      {name:"8 slices brioche bread", tag:"brioche"},
+      {name:"4 eggs", tag:"egg"},
+      {name:"3/4 cup milk", tag:"milk"},
+      {name:"1 tsp vanilla (optional)", tag:"vanilla", pantry:true},
+      {name:"Pinch of cinnamon (optional)", tag:"cinnamon", pantry:true},
+      {name:"Butter for the pan", tag:"butter"},
+      {name:"Syrup for serving", tag:"syrup"}
+    ],
+    steps:[
+      "Whisk eggs, milk, vanilla, and cinnamon in a wide shallow dish.",
+      "Heat a skillet on medium with a pat of butter.",
+      "Dip each brioche slice in the egg mixture, 10 seconds per side. Don't soak — brioche absorbs fast.",
+      "Cook 2-3 min per side until golden. Serve with butter and syrup."
+    ],
+    tip:"Brioche is rich already, so go easy on the milk in the egg mixture."
+  },
+  {
+    id:"r-scrambled-eggs", name:"Scrambled Eggs", emoji:"🍳",
+    sub:"Soft, fluffy, foolproof", meal:"breakfast",
+    diff:"easy", timeMin:10, serves:4,
+    ingredients:[
+      {name:"8 eggs", tag:"egg"},
+      {name:"1/4 cup milk", tag:"milk"},
+      {name:"2 tbsp butter", tag:"butter"},
+      {name:"Salt and pepper", tag:"salt", pantry:true}
+    ],
+    steps:[
+      "Crack eggs into a bowl with milk and a pinch of salt. Beat until fully combined.",
+      "Melt butter in a non-stick pan on LOW heat.",
+      "Pour in eggs. Let sit 30 seconds, then gently push from edges to center with a spatula.",
+      "Keep stirring slowly. Take off heat when eggs look just barely set — still glossy, not dry."
+    ],
+    tip:"Low heat and patience make creamy eggs. High heat makes rubber."
+  },
+  {
+    id:"r-breakfast-sandwich", name:"Breakfast Sandwiches", emoji:"🥪",
+    sub:"Brioche, egg, ham — quick weekday win", meal:"breakfast",
+    diff:"easy", timeMin:15, serves:4,
+    ingredients:[
+      {name:"8 slices brioche bread", tag:"brioche"},
+      {name:"4 eggs", tag:"egg"},
+      {name:"Buddig honey ham (4 servings)", tag:"ham"},
+      {name:"Butter for cooking", tag:"butter"},
+      {name:"Salt and pepper", tag:"salt", pantry:true},
+      {name:"Cheese slices (optional, store run)", tag:"cheese", pantry:false}
+    ],
+    steps:[
+      "Toast brioche slices lightly. Set aside.",
+      "Heat butter in a skillet on medium. Crack eggs into the pan and cook over-easy or scrambled, your call.",
+      "Warm ham slices in the same pan for 30 seconds per side.",
+      "Stack: brioche, ham, egg, salt and pepper, cheese if using, top brioche. Serve."
+    ],
+    tip:"Add a smear of mustard or mayo if you like — both pair great with brioche."
+  },
+  {
+    id:"r-cinnamon-toast", name:"Cinnamon Sugar Toast", emoji:"🍯",
+    sub:"5-minute kid favorite", meal:"breakfast",
+    diff:"easy", timeMin:5, serves:4,
+    ingredients:[
+      {name:"8 slices white bread", tag:"bread"},
+      {name:"Butter, softened", tag:"butter"},
+      {name:"4 tbsp sugar", tag:"sugar", pantry:true},
+      {name:"1 tsp cinnamon", tag:"cinnamon", pantry:true}
+    ],
+    steps:[
+      "Toast the bread.",
+      "Mix sugar and cinnamon in a small bowl.",
+      "Spread butter on warm toast. Sprinkle cinnamon-sugar generously.",
+      "Cut diagonally and serve."
+    ],
+    tip:"Make extra cinnamon-sugar — keeps in a jar forever and gets used constantly."
+  },
+
+  // ===== LUNCH =====
+  {
+    id:"r-turkey-sandwich", name:"Turkey Sandwich", emoji:"🥪",
+    sub:"Lunch in 3 minutes", meal:"lunch",
+    diff:"easy", timeMin:5, serves:4,
+    ingredients:[
+      {name:"8 slices bread", tag:"bread"},
+      {name:"Buddig honey roasted turkey (4 servings)", tag:"turkey"},
+      {name:"Mustard or mayo", tag:"mustard"},
+      {name:"Lettuce, tomato, cheese (optional)", tag:"lettuce", pantry:false}
+    ],
+    steps:[
+      "Lay out bread. Spread mustard or mayo on one side of each.",
+      "Layer turkey on the bottom slice. Add lettuce, tomato, or cheese if you have them.",
+      "Top, slice diagonally, and serve."
+    ],
+    tip:"Toast the bread for a different texture. Add a slice of pickle or apple on the side."
+  },
+  {
+    id:"r-ham-cheese-sliders", name:"Hawaiian Ham & Cheese Sliders", emoji:"🥯",
+    sub:"Crowd pleaser, baked sweet rolls", meal:"lunch",
+    diff:"easy", timeMin:25, serves:4,
+    ingredients:[
+      {name:"12 King's Hawaiian rolls", tag:"hawaiian rolls"},
+      {name:"Buddig honey ham (12 oz)", tag:"ham"},
+      {name:"Swiss or American cheese (12 slices)", tag:"cheese", pantry:false},
+      {name:"4 tbsp butter, melted", tag:"butter"},
+      {name:"1 tsp Dijon mustard", tag:"mustard"},
+      {name:"1 tsp poppy seeds (optional)", tag:"poppy seeds", pantry:true}
+    ],
+    steps:[
+      "Preheat oven to 350°F. Without separating the rolls, slice the whole pack horizontally so you have two slabs.",
+      "Place bottom slab in a baking dish. Layer ham, then cheese, then top slab.",
+      "Mix melted butter with mustard and poppy seeds. Brush all over the top.",
+      "Cover with foil, bake 15 min. Uncover and bake 5 more min until tops are golden. Cut into 12 sliders."
+    ],
+    tip:"These reheat beautifully — make extra and pack for school lunches."
+  },
+  {
+    id:"r-chicken-noodle-soup", name:"Homemade Chicken Noodle Soup", emoji:"🍲",
+    sub:"Stovetop comfort", meal:"lunch",
+    diff:"easy", timeMin:20, serves:4,
+    ingredients:[
+      {name:"8 cups chicken broth", tag:"chicken broth"},
+      {name:"2 cups egg noodles", tag:"egg noodles"},
+      {name:"2 cups cooked chicken or turkey, shredded", tag:"turkey"},
+      {name:"2 carrots, diced (store run)", tag:"carrot", pantry:false},
+      {name:"2 celery stalks, diced (store run)", tag:"celery", pantry:false},
+      {name:"Salt, pepper, dried thyme", tag:"salt", pantry:true}
+    ],
+    steps:[
+      "Bring broth to a boil. Add diced carrots and celery. Simmer 5 min.",
+      "Add egg noodles. Cook per package, usually 7-8 min.",
+      "Add shredded turkey or chicken. Heat through.",
+      "Season with salt, pepper, and a pinch of thyme. Serve hot."
+    ],
+    tip:"No carrots or celery on hand? Skip them — broth + noodles + turkey is still excellent."
+  },
+  {
+    id:"r-grilled-cheese", name:"Grilled Cheese", emoji:"🧀",
+    sub:"Crispy outside, melty inside", meal:"lunch",
+    diff:"easy", timeMin:10, serves:4,
+    ingredients:[
+      {name:"8 slices bread", tag:"bread"},
+      {name:"Cheese slices (8, store run)", tag:"cheese", pantry:false},
+      {name:"4 tbsp butter, softened", tag:"butter"}
+    ],
+    steps:[
+      "Butter one side of each bread slice.",
+      "Heat a skillet on medium-low. Place bread butter-side-down. Add cheese, top with another slice butter-side-up.",
+      "Cook 3-4 min per side until golden brown and cheese is fully melted. Don't rush the heat.",
+      "Cut diagonally and serve with soup or pickles."
+    ],
+    tip:"Mayo instead of butter on the outside makes an extra-crispy crust — try it once."
+  },
+  {
+    id:"r-tuna-melt", name:"Tuna Melt", emoji:"🐟",
+    sub:"Diner classic", meal:"lunch",
+    diff:"easy", timeMin:15, serves:4,
+    ingredients:[
+      {name:"8 slices bread", tag:"bread"},
+      {name:"2 cans tuna in water (store run)", tag:"tuna", pantry:false},
+      {name:"1/4 cup mayo (store run)", tag:"mayo", pantry:false},
+      {name:"1 tbsp mustard", tag:"mustard"},
+      {name:"1 small onion, finely chopped (store run)", tag:"onion", pantry:false},
+      {name:"Cheese slices (8, store run)", tag:"cheese", pantry:false},
+      {name:"Butter for the pan", tag:"butter"}
+    ],
+    steps:[
+      "Drain tuna well. Mix with mayo, mustard, and onion in a bowl. Salt and pepper to taste.",
+      "Spread tuna mix on 4 slices of bread. Top each with cheese, then another bread slice.",
+      "Butter outsides. Cook in a skillet on medium-low, 3-4 min per side until cheese melts and bread is golden.",
+      "Cut and serve."
+    ]
+  },
+
+  // ===== DINNER =====
+  {
+    id:"r-spaghetti-marinara", name:"Spaghetti with Marinara", emoji:"🍝",
+    sub:"Weeknight dinner in 20 min", meal:"dinner",
+    diff:"easy", timeMin:20, serves:4,
+    ingredients:[
+      {name:"1 lb spaghetti", tag:"spaghetti"},
+      {name:"1 jar marinara sauce (store run)", tag:"marinara", pantry:false},
+      {name:"Salt for pasta water", tag:"salt", pantry:true},
+      {name:"Parmesan to finish (store run)", tag:"parmesan", pantry:false},
+      {name:"Olive oil (optional)", tag:"olive oil", pantry:true}
+    ],
+    steps:[
+      "Bring a large pot of well-salted water to a rolling boil.",
+      "Add spaghetti and cook per package, usually 9-11 min until al dente.",
+      "Meanwhile, warm marinara in a small pot on low.",
+      "Drain pasta (reserve a splash of pasta water). Toss with sauce and a splash of pasta water for silkiness.",
+      "Top with Parmesan. Serve with bread on the side."
+    ],
+    tip:"Salt the pasta water like the sea — it's your only chance to season the noodles themselves."
+  },
+  {
+    id:"r-spaghetti-meat-sauce", name:"Spaghetti with Meat Sauce", emoji:"🍝",
+    sub:"Brown meat into the sauce — bigger flavor", meal:"dinner",
+    diff:"easy", timeMin:30, serves:4,
+    ingredients:[
+      {name:"1 lb spaghetti", tag:"spaghetti"},
+      {name:"1 lb ground beef (store run)", tag:"ground beef", pantry:false},
+      {name:"1 jar marinara sauce (store run)", tag:"marinara", pantry:false},
+      {name:"1 small onion, diced (store run)", tag:"onion", pantry:false},
+      {name:"2 cloves garlic, minced (store run)", tag:"garlic", pantry:false},
+      {name:"Salt, pepper, Italian seasoning", tag:"salt", pantry:true}
+    ],
+    steps:[
+      "In a large skillet, brown ground beef on medium-high heat, breaking it up. Drain excess fat.",
+      "Add onion and garlic to the meat. Cook 3-4 min until softened.",
+      "Pour in marinara, season with salt, pepper, and Italian seasoning. Simmer on low while pasta cooks.",
+      "Boil spaghetti per package, drain, reserve some pasta water.",
+      "Toss pasta with meat sauce. Serve hot, top with Parmesan if you have it."
+    ]
+  },
+  {
+    id:"r-egg-noodle-skillet", name:"Buttered Egg Noodles with Turkey", emoji:"🍜",
+    sub:"15-minute pantry dinner", meal:"dinner",
+    diff:"easy", timeMin:15, serves:4,
+    ingredients:[
+      {name:"12 oz egg noodles", tag:"egg noodles"},
+      {name:"4 tbsp butter", tag:"butter"},
+      {name:"Buddig honey turkey (8 oz, torn)", tag:"turkey"},
+      {name:"1 cup chicken broth", tag:"chicken broth"},
+      {name:"Salt, pepper, parsley", tag:"salt", pantry:true}
+    ],
+    steps:[
+      "Cook egg noodles per package. Drain.",
+      "Melt butter in the same pot on medium. Add torn turkey and warm 1 min.",
+      "Add cooked noodles back to the pot. Pour in broth, toss to coat.",
+      "Season with salt and pepper. Serve hot, sprinkle with parsley if you have it."
+    ],
+    tip:"This is comfort food on autopilot. Add frozen peas or corn if you have any in the freezer."
+  },
+  {
+    id:"r-meatloaf", name:"Classic Meatloaf", emoji:"🥩",
+    sub:"Sunday dinner, leftovers Monday", meal:"dinner",
+    diff:"med", timeMin:75, serves:4,
+    ingredients:[
+      {name:"1.5 lb ground beef (store run)", tag:"ground beef", pantry:false},
+      {name:"1 cup breadcrumbs (or crushed saltines)", tag:"crackers"},
+      {name:"1 egg", tag:"egg"},
+      {name:"1/2 cup milk", tag:"milk"},
+      {name:"1 small onion, finely diced (store run)", tag:"onion", pantry:false},
+      {name:"1/2 cup ketchup, divided", tag:"ketchup"},
+      {name:"2 tbsp brown sugar", tag:"sugar", pantry:true},
+      {name:"Salt, pepper, garlic powder", tag:"salt", pantry:true}
+    ],
+    steps:[
+      "Preheat oven to 350°F.",
+      "Mix beef, breadcrumbs, egg, milk, onion, 1/4 cup ketchup, salt, pepper, and garlic powder in a large bowl. Don't overwork.",
+      "Shape into a loaf in a baking dish or loaf pan.",
+      "Mix remaining 1/4 cup ketchup with brown sugar. Spread on top of the loaf.",
+      "Bake 55-60 min until internal temp is 160°F. Rest 10 min before slicing."
+    ],
+    tip:"Crushed saltines work as well as breadcrumbs — and you've got them already."
+  },
+  {
+    id:"r-pasta-aglio-olio", name:"Pasta Aglio e Olio", emoji:"🍝",
+    sub:"5 ingredients, 15 minutes, restaurant flavor", meal:"dinner",
+    diff:"med", timeMin:15, serves:4,
+    ingredients:[
+      {name:"1 lb spaghetti", tag:"spaghetti"},
+      {name:"6 cloves garlic, thinly sliced (store run)", tag:"garlic", pantry:false},
+      {name:"1/2 cup olive oil (store run)", tag:"olive oil", pantry:false},
+      {name:"1/2 tsp red pepper flakes", tag:"red pepper flakes", pantry:true},
+      {name:"Salt for pasta water", tag:"salt", pantry:true},
+      {name:"Parmesan and parsley (store run)", tag:"parmesan", pantry:false}
+    ],
+    steps:[
+      "Boil spaghetti in heavily salted water until al dente. Reserve 1 cup pasta water before draining.",
+      "While pasta cooks, warm olive oil in a large skillet on low. Add sliced garlic. Cook slowly until pale gold — do NOT brown.",
+      "Add red pepper flakes and a pinch of salt to the oil.",
+      "Drain pasta, add to the skillet with 1/2 cup pasta water. Toss vigorously for 1-2 min until silky.",
+      "Top with Parmesan and parsley. Serve immediately."
+    ],
+    tip:"The pasta water is the secret. The starch in it emulsifies with the oil to make a real sauce, not a slick.",
+    source:{name:"Serious Eats — The Food Lab", url:"https://www.seriouseats.com/the-best-spaghetti-aglio-e-olio-recipe"}
+  },
+  {
+    id:"r-baked-ham-pasta", name:"Ham & Cheese Pasta Bake", emoji:"🍝",
+    sub:"Use up the deli ham", meal:"dinner",
+    diff:"med", timeMin:40, serves:4,
+    ingredients:[
+      {name:"12 oz egg noodles", tag:"egg noodles"},
+      {name:"Buddig honey ham (8 oz, chopped)", tag:"ham"},
+      {name:"3 tbsp butter", tag:"butter"},
+      {name:"3 tbsp flour (store run)", tag:"flour", pantry:false},
+      {name:"2.5 cups milk", tag:"milk"},
+      {name:"2 cups shredded cheese (store run)", tag:"cheese", pantry:false},
+      {name:"1/2 cup breadcrumbs or crushed crackers", tag:"crackers"},
+      {name:"Salt, pepper, paprika", tag:"salt", pantry:true}
+    ],
+    steps:[
+      "Preheat oven to 375°F. Cook egg noodles per package, drain.",
+      "In a saucepan, melt butter on medium. Whisk in flour, cook 1 min. Slowly whisk in milk. Cook until thickened, 4-5 min.",
+      "Off heat, stir in cheese until melted. Season with salt, pepper, paprika.",
+      "Combine noodles, sauce, and chopped ham in a baking dish. Top with breadcrumbs.",
+      "Bake 20-25 min until bubbly and golden on top."
+    ]
+  },
+  {
+    id:"r-roasted-chicken-thighs", name:"Roasted Chicken Thighs", emoji:"🍗",
+    sub:"Crispy skin, juicy meat, easy weeknight", meal:"dinner",
+    diff:"med", timeMin:45, serves:4,
+    ingredients:[
+      {name:"8 bone-in skin-on chicken thighs (store run)", tag:"chicken thighs", pantry:false},
+      {name:"2 tbsp olive oil (store run)", tag:"olive oil", pantry:false},
+      {name:"Salt, pepper, garlic powder, paprika", tag:"salt", pantry:true},
+      {name:"Lemon (store run)", tag:"lemon", pantry:false}
+    ],
+    steps:[
+      "Preheat oven to 425°F. Pat chicken thighs very dry with paper towels.",
+      "Rub with olive oil. Season generously with salt, pepper, garlic powder, and paprika.",
+      "Place skin-side-up on a rimmed baking sheet. Don't crowd.",
+      "Roast 35-40 min until skin is deeply golden and juices run clear (165°F internal).",
+      "Squeeze lemon over the top and rest 5 min before serving."
+    ],
+    tip:"Dry skin = crispy skin. The pat-dry step matters more than anything else.",
+    source:{name:"NYT Cooking", url:"https://cooking.nytimes.com/recipes/1018068-crispy-roasted-chicken-thighs"}
+  },
+  {
+    id:"r-sheet-pan-sausage", name:"Sheet Pan Sausage & Peppers", emoji:"🌶️",
+    sub:"One pan, 30 min, real dinner", meal:"dinner",
+    diff:"easy", timeMin:35, serves:4,
+    ingredients:[
+      {name:"1.5 lb Italian sausage (store run)", tag:"sausage", pantry:false},
+      {name:"3 bell peppers, sliced (store run)", tag:"bell pepper", pantry:false},
+      {name:"1 large onion, sliced (store run)", tag:"onion", pantry:false},
+      {name:"2 tbsp olive oil (store run)", tag:"olive oil", pantry:false},
+      {name:"Salt, pepper, oregano", tag:"salt", pantry:true},
+      {name:"Hawaiian rolls for serving", tag:"hawaiian rolls"}
+    ],
+    steps:[
+      "Preheat oven to 425°F.",
+      "Toss sliced peppers and onions with olive oil, salt, pepper, and oregano on a sheet pan.",
+      "Nestle sausages on top of the vegetables.",
+      "Roast 25-30 min, flipping sausages halfway, until sausages are cooked through and peppers are caramelized.",
+      "Serve on Hawaiian rolls or over rice or pasta."
+    ]
+  },
+
+  // ===== SNACKS =====
+  {
+    id:"r-fruit-cottage-cheese", name:"Fruit & Cottage Cheese", emoji:"🍑",
+    sub:"30-second protein snack", meal:"snack",
+    diff:"easy", timeMin:2, serves:1,
+    ingredients:[
+      {name:"1 cup cottage cheese", tag:"cottage cheese"},
+      {name:"Mandarin oranges or applesauce", tag:"mandarin oranges"}
+    ],
+    steps:[
+      "Scoop cottage cheese into a bowl.",
+      "Top with drained mandarin oranges or a spoonful of applesauce. Done."
+    ]
+  },
+  {
+    id:"r-saltines-cheese", name:"Saltines & Snack Plate", emoji:"🍘",
+    sub:"Easy after-school snack", meal:"snack",
+    diff:"easy", timeMin:3, serves:1,
+    ingredients:[
+      {name:"Saltine crackers", tag:"saltines"},
+      {name:"Cheese slices (store run)", tag:"cheese", pantry:false},
+      {name:"Sliced ham or turkey", tag:"ham"}
+    ],
+    steps:[
+      "Arrange a small stack of saltines on a plate.",
+      "Add cheese slices and a few rolled-up pieces of ham or turkey.",
+      "Eat them as little stacks. Pickle on the side if you have one."
+    ]
+  },
+  {
+    id:"r-frozen-treat", name:"Frozen Fruit Bar", emoji:"🥭",
+    sub:"Mango bars or fudge bars", meal:"snack",
+    diff:"easy", timeMin:1, serves:1,
+    ingredients:[
+      {name:"Outshine Mango Fruit Bar OR Kroger Fudge Bar", tag:"mango bar"}
+    ],
+    steps:[
+      "Pull a bar from the freezer. Unwrap. Eat."
+    ],
+    tip:"Mango bars are pure fruit, fudge bars are low fat. Both are weeknight wins."
+  }
+];
+
+
+/* ---------- STATE ---------- */
+var sel = [];
+var cookMode = false;
+var matchMode = "all"; // 'all' or 'strict'
+var filters = { meal:"any", diff:"any", time:"any" };
+var SHOPKEY = "bk_shop_v1";
+
+/* ---------- INVENTORY RENDERING ---------- */
+function fmtDate(d) {
+  // d is YYYY-MM-DD; render like "Apr 19"
+  if (!d) return "";
+  var parts = d.split("-");
+  if (parts.length !== 3) return d;
+  var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  var m = parseInt(parts[1], 10) - 1;
+  var day = parseInt(parts[2], 10);
+  if (m < 0 || m > 11) return d;
+  return months[m] + " " + day;
+}
+
+function renderInv() {
+  var q = (document.getElementById("invSearch").value || "").toLowerCase().trim();
+  var sort = document.getElementById("invSort").value;
+  var items = INVENTORY.slice();
+
+  // Filter by search
+  if (q) {
+    items = items.filter(function(it) {
+      if (it.name.toLowerCase().indexOf(q) !== -1) return true;
+      if (it.cat.toLowerCase().indexOf(q) !== -1) return true;
+      for (var i=0; i<it.tags.length; i++) { if (it.tags[i].indexOf(q) !== -1) return true; }
+      return false;
+    });
+  }
+
+  // Sort
+  if (sort === "name") items.sort(function(a,b){ return a.name.localeCompare(b.name); });
+  else if (sort === "namedesc") items.sort(function(a,b){ return b.name.localeCompare(a.name); });
+  else if (sort === "datenew") items.sort(function(a,b){ return b.added.localeCompare(a.added); });
+  else if (sort === "dateold") items.sort(function(a,b){ return a.added.localeCompare(b.added); });
+  // 'cat' is the default — group by category, sort by name within
+
+  var out = document.getElementById("invList");
+  if (items.length === 0) {
+    out.innerHTML = '<div class="inv-empty">No items match.</div>';
+    return;
+  }
+
+  var html = "";
+  if (sort === "cat") {
+    // Group by category
+    var byCat = {};
+    var catOrder = [];
+    for (var i=0; i<items.length; i++) {
+      var c = items[i].cat;
+      if (!byCat[c]) { byCat[c] = []; catOrder.push(c); }
+      byCat[c].push(items[i]);
+    }
+    for (var k=0; k<catOrder.length; k++) {
+      var cat = catOrder[k];
+      var rows = byCat[cat].slice().sort(function(a,b){ return a.name.localeCompare(b.name); });
+      html += '<div class="inv-grouphead">' + cat + '</div>';
+      for (var j=0; j<rows.length; j++) {
+        html += invRowHTML(rows[j]);
+      }
+    }
+  } else {
+    for (var i=0; i<items.length; i++) {
+      html += invRowHTML(items[i]);
+    }
+  }
+  out.innerHTML = html;
+}
+
+function invRowHTML(it) {
+  return '<div class="inv-row">' +
+    '<div><div class="inv-name">' + esc(it.name) + '</div>' +
+    '<div class="inv-cat">' + esc(it.cat) + '</div></div>' +
+    '<div class="inv-date">' + fmtDate(it.added) + '</div>' +
+    '</div>';
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+/* ---------- RECIPE MATCHING ---------- */
+function recipeMatch(recipe) {
+  // Returns { have: int, need: int, missingTags: array, missingIngredients: array }
+  var have = 0;
+  var need = 0;
+  var missing = [];
+  for (var i=0; i<recipe.ingredients.length; i++) {
+    var ing = recipe.ingredients[i];
+    if (ing.pantry) { have++; continue; } // assume pantry staples like salt
+    if (hasInInventory(ing.tag)) {
+      have++;
+    } else {
+      need++;
+      missing.push(ing);
+    }
+  }
+  return { have: have, need: need, total: have + need, missing: missing };
+}
+
+function matchBadge(m) {
+  if (m.need === 0) return '<span class="rbadge match">In stock</span>';
+  if (m.need <= 2) return '<span class="rbadge match partial">Need ' + m.need + '</span>';
+  return '<span class="rbadge match low">Need ' + m.need + '</span>';
+}
+
+function diffBadge(d) {
+  if (d === "easy") return '<span class="rbadge diff-easy">Easy</span>';
+  if (d === "med") return '<span class="rbadge diff-med">Medium</span>';
+  return '<span class="rbadge diff-hard">Hard</span>';
+}
+
+function timeBadge(t) {
+  return '<span class="rbadge time">' + t + ' min</span>';
+}
+
+/* ---------- SUGGESTIONS RENDERING ---------- */
+function renderSuggestions() {
+  var grid = document.getElementById("sugGrid");
+  var list = RECIPES.slice();
+
+  // Filter by meal
+  if (filters.meal !== "any") list = list.filter(function(r){ return r.meal === filters.meal; });
+  // Filter by difficulty
+  if (filters.diff !== "any") list = list.filter(function(r){ return r.diff === filters.diff; });
+  // Filter by time
+  if (filters.time !== "any") {
+    var maxT = parseInt(filters.time, 10);
+    list = list.filter(function(r){ return r.timeMin <= maxT; });
+  }
+
+  // Compute matches and filter by matchMode
+  list = list.map(function(r){ r._match = recipeMatch(r); return r; });
+  if (matchMode === "strict") list = list.filter(function(r){ return r._match.need === 0; });
+
+  // Sort: have-it-all first, then by fewest needed, then by time
+  list.sort(function(a,b){
+    if (a._match.need !== b._match.need) return a._match.need - b._match.need;
+    return a.timeMin - b.timeMin;
+  });
+
+  if (list.length === 0) {
+    grid.innerHTML = '<div class="empty-card" style="grid-column: 1 / -1;"><span class="empty-em">🔍</span><div class="empty-msg">No recipes match these filters. Try loosening them.</div></div>';
+    return;
+  }
+
+  var html = "";
+  for (var i=0; i<list.length; i++) {
+    var r = list[i];
+    html += '<div class="card" onclick="openRecipe(\'' + r.id + '\', event)" data-n="' + esc(r.name) + '" data-e="' + r.emoji + '">' +
+      '<div class="ck">✓</div>' +
+      '<span class="ce">' + r.emoji + '</span>' +
+      '<div class="cn">' + esc(r.name) + '</div>' +
+      '<div class="cno">' + esc(r.sub) + '</div>' +
+      '<div class="rmeta">' +
+        diffBadge(r.diff) + timeBadge(r.timeMin) + matchBadge(r._match) +
+      '</div>' +
+      '</div>';
+  }
+  grid.innerHTML = html;
+}
+
+/* ---------- COOK TAB RENDERING (all recipes, no filters) ---------- */
+function renderCook() {
+  var grid = document.getElementById("cookGrid");
+  var byMeal = { breakfast:[], lunch:[], dinner:[], snack:[] };
+  for (var i=0; i<RECIPES.length; i++) byMeal[RECIPES[i].meal].push(RECIPES[i]);
+
+  var labels = { breakfast:"BREAKFAST", lunch:"LUNCH", dinner:"DINNER", snack:"SNACKS" };
+  var order = ["breakfast","lunch","dinner","snack"];
+  var html = "";
+  for (var k=0; k<order.length; k++) {
+    var meal = order[k];
+    if (byMeal[meal].length === 0) continue;
+    html += '<div class="sublabel" style="grid-column: 1 / -1;">' + labels[meal] + '</div>';
+    for (var j=0; j<byMeal[meal].length; j++) {
+      var r = byMeal[meal][j];
+      html += '<div class="card" onclick="openRecipe(\'' + r.id + '\', event)">' +
+        '<span class="ce">' + r.emoji + '</span>' +
+        '<div class="cn">' + esc(r.name) + '</div>' +
+        '<div class="cno">' + esc(r.sub) + '</div>' +
+        '<div class="rh">Tap for recipe</div>' +
+        '</div>';
+    }
+  }
+  grid.innerHTML = html;
+}
+
+/* ---------- RECIPE DETAIL OVERLAY ---------- */
+function openRecipe(id, ev) {
+  // In Eat mode, on Suggestions or Cook tab, single-tap should open recipe details.
+  // (No selection/order behavior on recipe cards — selections are conceptual via Send Request.)
+  if (ev) ev.stopPropagation();
+
+  var r = null;
+  for (var i=0; i<RECIPES.length; i++) { if (RECIPES[i].id === id) { r = RECIPES[i]; break; } }
+  if (!r) return;
+
+  document.getElementById("rEm").textContent = r.emoji;
+  document.getElementById("rTitle").textContent = r.name;
+  document.getElementById("rSub").textContent = r.sub + " · serves " + r.serves;
+
+  var match = recipeMatch(r);
+  var mb = document.getElementById("rMetaBar");
+  mb.innerHTML = diffBadge(r.diff) + timeBadge(r.timeMin) + matchBadge(match);
+
+  // Ingredients with missing-marker
+  var ih = "";
+  for (var i=0; i<r.ingredients.length; i++) {
+    var ing = r.ingredients[i];
+    var miss = !ing.pantry && !hasInInventory(ing.tag);
+    ih += '<li' + (miss ? ' class="miss"' : '') + '>' + esc(ing.name) + '</li>';
+  }
+  document.getElementById("rIng").innerHTML = ih;
+
+  // Steps
+  var sh = "";
+  for (var i=0; i<r.steps.length; i++) {
+    sh += '<li><div class="sn">' + (i+1) + '</div><div>' + esc(r.steps[i]) + '</div></li>';
+  }
+  document.getElementById("rSteps").innerHTML = sh;
+
+  // Tip
+  var tip = document.getElementById("rTip");
+  if (r.tip) { tip.textContent = r.tip; tip.style.display = "block"; }
+  else { tip.style.display = "none"; }
+
+  // Source
+  var src = document.getElementById("rSource");
+  if (r.source) {
+    src.innerHTML = 'Adapted from <a href="' + esc(r.source.url) + '" target="_blank">' + esc(r.source.name) + '</a>';
+    src.style.display = "block";
+  } else { src.style.display = "none"; }
+
+  document.getElementById("recOvl").classList.add("on");
+}
+
+/* ---------- SUGGESTIONS FILTER CONTROLS ---------- */
+function setMatch(m) {
+  matchMode = m;
+  var chips = document.querySelectorAll("#matchToggle .chip");
+  for (var i=0; i<chips.length; i++) {
+    chips[i].classList.toggle("on", chips[i].getAttribute("data-match") === m);
+  }
+  renderSuggestions();
+}
+
+function toggleFilter(group, val, el) {
+  filters[group] = val;
+  var chips = document.querySelectorAll(".sug-row .chip[data-" + group + "]");
+  for (var i=0; i<chips.length; i++) {
+    chips[i].classList.toggle("on", chips[i].getAttribute("data-" + group) === val);
+  }
+  renderSuggestions();
+}
+
+
+/* ---------- SHOP TAB ---------- */
+/* Auto-suggested staples = items not currently in inventory but commonly needed for recipes,
+   plus general household basics. Manual list = user-curated; we ship a few defaults. */
+var SHOP_AUTO = [
+  { name:"Onion (yellow)", why:"In half the dinner recipes" },
+  { name:"Garlic", why:"Aglio e olio, meat sauce, roasted chicken" },
+  { name:"Olive oil", why:"Roasting, sauces, finishing" },
+  { name:"Bell peppers", why:"Sheet pan sausage & peppers" },
+  { name:"Italian sausage", why:"Sheet pan dinner" },
+  { name:"Ground beef", why:"Meatloaf, meat sauce" },
+  { name:"Chicken thighs (bone-in, skin-on)", why:"Roasted chicken thighs" },
+  { name:"Marinara sauce (jar)", why:"Spaghetti night" },
+  { name:"Shredded cheese", why:"Grilled cheese, pasta bake, sandwiches" },
+  { name:"Sliced cheese (Swiss/American)", why:"Sandwiches, sliders, melts" },
+  { name:"Mayo", why:"Sandwiches, tuna salad" },
+  { name:"Lettuce", why:"Sandwiches, side salads" },
+  { name:"Tomatoes", why:"Sandwiches, side salads" },
+  { name:"Tuna (canned)", why:"Tuna melts" },
+  { name:"Carrots", why:"Chicken soup, snacks" },
+  { name:"Celery", why:"Chicken soup, snacks" },
+  { name:"Lemons", why:"Roasted chicken, finishing" },
+  { name:"Parmesan cheese", why:"Pasta finishing" }
+];
+
+var SHOP_MANUAL_DEFAULT = [
+  { name:"Bananas (NOT — Lisa allergy)", why:"⚠️ Skip — Lisa is allergic to bananas" }
+];
+// Cleaner: only seed manual with non-allergy items
+SHOP_MANUAL_DEFAULT = [];
+
+function loadShopState() {
+  try {
+    var raw = localStorage.getItem(SHOPKEY);
+    if (!raw) return {};
+    return JSON.parse(raw) || {};
+  } catch(e) { return {}; }
+}
+function saveShopState(state) {
+  try { localStorage.setItem(SHOPKEY, JSON.stringify(state)); } catch(e) {}
+}
+
+function renderShop() {
+  var state = loadShopState();
+  var auto = document.getElementById("shopAuto");
+  var manual = document.getElementById("shopManual");
+  var manualEmpty = document.getElementById("shopManualEmpty");
+
+  var autoHTML = "";
+  for (var i=0; i<SHOP_AUTO.length; i++) {
+    var item = SHOP_AUTO[i];
+    var key = "auto_" + i;
+    var got = state[key] === true;
+    autoHTML += '<div class="shop-row' + (got ? ' got' : '') + '" onclick="toggleShop(\'' + key + '\')">' +
+      '<div class="shop-box">' + (got ? '✓' : '') + '</div>' +
+      '<div class="shop-text"><div class="shop-name-r">' + esc(item.name) + '</div>' +
+      '<div class="shop-why-r">' + esc(item.why) + '</div></div>' +
+      '</div>';
+  }
+  auto.innerHTML = autoHTML;
+
+  var manualHTML = "";
+  if (SHOP_MANUAL_DEFAULT.length === 0) {
+    manualEmpty.style.display = "block";
+  } else {
+    manualEmpty.style.display = "none";
+    for (var i=0; i<SHOP_MANUAL_DEFAULT.length; i++) {
+      var item = SHOP_MANUAL_DEFAULT[i];
+      var key = "manual_" + i;
+      var got = state[key] === true;
+      manualHTML += '<div class="shop-row' + (got ? ' got' : '') + '" onclick="toggleShop(\'' + key + '\')">' +
+        '<div class="shop-box">' + (got ? '✓' : '') + '</div>' +
+        '<div class="shop-text"><div class="shop-name-r">' + esc(item.name) + '</div>' +
+        (item.why ? '<div class="shop-why-r">' + esc(item.why) + '</div>' : '') + '</div>' +
+        '</div>';
+    }
+  }
+  manual.innerHTML = manualHTML;
+}
+
+function toggleShop(key) {
+  var state = loadShopState();
+  state[key] = !state[key];
+  saveShopState(state);
+  renderShop();
+}
+
+function clearShopChecks() {
+  saveShopState({});
+  renderShop();
+}
+
+/* ---------- TABS / MODE ---------- */
+function go(id, el) {
+  var tabs = document.querySelectorAll(".tab");
+  for (var i=0; i<tabs.length; i++) tabs[i].classList.remove("on");
+  var secs = document.querySelectorAll(".sec");
+  for (var i=0; i<secs.length; i++) secs[i].classList.remove("on");
+  el.classList.add("on");
+  document.getElementById("tab-" + id).classList.add("on");
+  // Hide order bar on Inventory and Order Out (no selections happen there)
+  var hideOrder = (id === "inventory" || id === "orderout" || id === "shop");
+  document.getElementById("obar").style.display = hideOrder ? "none" : "block";
+  // Adjust body padding when bar is hidden
+  document.body.style.paddingBottom = hideOrder ? "20px" : "110px";
+}
+
+function setMode(m) {
+  cookMode = (m === "cook");
+  document.body.classList.toggle("cook", cookMode);
+  document.getElementById("eatBtn").classList.toggle("active", !cookMode);
+  document.getElementById("cookBtn").classList.toggle("active", cookMode);
+  document.getElementById("htitle").textContent = cookMode ? "Cook Mode" : "Bandera Kitchen";
+  document.getElementById("hsub").textContent = cookMode
+    ? "Tap any recipe to see how to make it"
+    : "Tap what sounds good — we'll take care of the rest";
+  document.getElementById("oLbl").textContent = cookMode ? "Cooking Plan" : "My Selections";
+}
+
+/* ---------- ORDER / MESSENGER FLOW ----------
+   In Eat mode, tapping recipe cards opens the recipe overlay (not a selection).
+   The "My Selections" bar is preserved for future use but currently has no items.
+   For now we treat the recipe tap as info-only; selections happen by long-press.
+   To keep things simple in v1, we'll repurpose: clicking a recipe ALWAYS opens detail.
+   The Send-to-Messenger flow is preserved so we can add a "Send this for dinner!" button on the recipe overlay later. */
+
+function openOrder() {
+  buildReview();
+  document.getElementById("revView").style.display = "block";
+  document.getElementById("sendView").classList.remove("on");
+  document.getElementById("ordOvl").classList.add("on");
+}
+function buildReview() {
+  var h = "";
+  for (var i=0; i<sel.length; i++) {
+    var nm = sel[i].n.replace(/'/g, "\\'");
+    h += '<div class="oitem"><span class="oem">' + sel[i].e + '</span><span class="onm">' + esc(sel[i].n) + '</span><span class="orem" onclick="removeItem(\'' + nm + '\')">×</span></div>';
+  }
+  if (sel.length === 0) {
+    h = '<p style="text-align:center;padding:20px 0;color:#a08868;">No selections yet. Tap recipes from Suggestions or Cook to add them.</p>';
+  }
+  document.getElementById("oItems").innerHTML = h;
+}
+function removeItem(n) {
+  var tmp = [];
+  for (var i=0; i<sel.length; i++) { if (sel[i].n !== n) tmp.push(sel[i]); }
+  sel = tmp;
+  updateBar();
+  if (sel.length === 0) closeOvl("ordOvl"); else buildReview();
+}
+function updateBar() {
+  document.getElementById("oCnt").textContent = sel.length;
+  document.getElementById("oBtn").disabled = (sel.length === 0);
+}
+function showSend() {
+  var lines = "";
+  for (var i=0; i<sel.length; i++) {
+    if (i > 0) lines += "\n";
+    lines += sel[i].e + " " + sel[i].n;
+  }
+  document.getElementById("msgBox").value = "Dinner thoughts:\n\n" + lines + "\n\nWhat do you think?";
+  document.getElementById("copyBtn").textContent = "Copy Message";
+  document.getElementById("copyBtn").classList.remove("done");
+  document.getElementById("revView").style.display = "none";
+  document.getElementById("sendView").classList.add("on");
+}
+function backToReview() {
+  document.getElementById("revView").style.display = "block";
+  document.getElementById("sendView").classList.remove("on");
+  buildReview();
+}
+function doCopy() {
+  var box = document.getElementById("msgBox");
+  var btn = document.getElementById("copyBtn");
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(box.value).then(function(){ copied(btn); }).catch(function(){ fallbackCopy(box, btn); });
+  } else { fallbackCopy(box, btn); }
+}
+function fallbackCopy(box, btn) {
+  box.removeAttribute("readonly");
+  box.select();
+  box.setSelectionRange(0, 99999);
+  try { document.execCommand("copy"); copied(btn); }
+  catch(e) { btn.textContent = "Select text above and copy manually"; }
+  box.setAttribute("readonly", true);
+  if (window.getSelection) window.getSelection().removeAllRanges();
+}
+function copied(btn) {
+  btn.textContent = "Copied! Now paste into Messenger";
+  btn.classList.add("done");
+  setTimeout(function(){ btn.textContent = "Copy Message"; btn.classList.remove("done"); }, 4000);
+}
+function closeOvl(id) { document.getElementById(id).classList.remove("on"); }
+function bgClose(ev, id) { if (ev.target === document.getElementById(id)) closeOvl(id); }
+function resetAll() {
+  sel = [];
+  updateBar();
+  closeOvl("ordOvl");
+}
+
+/* ---------- INIT ---------- */
+window.addEventListener("DOMContentLoaded", function(){
+  renderInv();
+  renderSuggestions();
+  renderCook();
+  renderShop();
+  // Inventory tab is the default landing tab; hide order bar there.
+  document.getElementById("obar").style.display = "none";
+  document.body.style.paddingBottom = "20px";
+});
+</script>
+</body>
+</html>
