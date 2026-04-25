@@ -7,23 +7,10 @@
 <title>Bandera Kitchen</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: #faf6f0; color: #2a3328; padding-bottom: 110px; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: #faf6f0; color: #2a3328; padding-bottom: 30px; }
 header { background: #c44e2a; padding: 16px 14px 12px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.15); }
-.header-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 header h1 { font-size: 20px; color: white; font-weight: 800; letter-spacing: -0.01em; }
 header p { color: rgba(255,255,255,0.85); font-size: 12px; margin-top: 3px; }
-.mode-toggle { display: flex; background: rgba(0,0,0,0.22); border-radius: 20px; padding: 3px; gap: 2px; flex-shrink: 0; }
-.mode-btn { padding: 6px 14px; border-radius: 16px; border: none; font-size: 12px; font-weight: 700; cursor: pointer; background: transparent; color: rgba(255,255,255,0.78); }
-.mode-btn.active { background: white; color: #c44e2a; }
-body.cook header { background: #2c5e3f; }
-body.cook .mode-btn.active { color: #2c5e3f; }
-body.cook .tab.on { color: #2c5e3f; border-bottom-color: #2c5e3f; }
-body.cook .card.picked { border-color: #2c5e3f; background: #e6f0e6; }
-body.cook .card.picked .ck { background: #2c5e3f; }
-body.cook .snote { background: #e6f0e6; border-color: #2c5e3f; color: #2c5e3f; }
-body.cook .order-btn { background: #2c5e3f; }
-body.cook .order-btn .bdg { color: #2c5e3f; }
-body.cook .rh { display: block; }
 .tabs { display: flex; overflow-x: auto; background: white; border-bottom: 2px solid #ead8c4; padding: 0 6px; scrollbar-width: none; position: sticky; top: 76px; z-index: 90; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
 .tabs::-webkit-scrollbar { display: none; }
 .tab { flex-shrink: 0; padding: 12px 14px; font-size: 13px; font-weight: 700; color: #a08868; border-bottom: 3px solid transparent; cursor: pointer; white-space: nowrap; margin-bottom: -2px; letter-spacing: 0.01em; }
@@ -51,7 +38,7 @@ body.cook .rh { display: block; }
 .rbadge.diff-med { background: #fef0d4; color: #7a5414; }
 .rbadge.diff-hard { background: #fde0d4; color: #8a3818; }
 .rbadge.time { background: #ead8c4; color: #6a4828; }
-.rbadge.match { background: #c44e2a; color: white; }
+.rbadge.match { background: #1f5e2e; color: white; }
 .rbadge.match.partial { background: #d68a3a; }
 .rbadge.match.low { background: #a08868; }
 
@@ -113,39 +100,10 @@ body.cook .rh { display: block; }
 .oo-btn.carryout { background: #ead8c4; color: #2a3328; }
 .oo-updated { text-align: center; font-size: 11px; color: #c0a888; margin-top: 8px; padding-bottom: 8px; }
 
-/* Order bar (Eat mode) */
-.obar { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid #ead8c4; padding: 12px 14px; z-index: 200; box-shadow: 0 -3px 12px rgba(0,0,0,0.08); }
-.order-btn { width: 100%; background: #c44e2a; color: white; border: none; border-radius: 14px; padding: 14px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
-.order-btn:disabled { background: #d8b8a8; }
-.bdg { background: white; color: #c44e2a; border-radius: 20px; padding: 2px 9px; font-size: 13px; font-weight: 800; }
-
-/* Overlays */
+/* Overlays (used by recipe overlay) */
 .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 300; align-items: flex-end; }
 .overlay.on { display: flex; }
-.sheet { background: white; border-radius: 22px 22px 0 0; padding: 20px 16px 40px; width: 100%; max-height: 88vh; overflow-y: auto; }
 .handle { width: 40px; height: 4px; background: #ead8c4; border-radius: 2px; margin: 0 auto 16px; }
-.sheet h2 { font-size: 20px; font-weight: 800; margin-bottom: 4px; color: #2a3328; }
-.sheet p { font-size: 13px; color: #a08868; margin-bottom: 16px; }
-.oitem { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #ead8c4; }
-.oitem:last-child { border-bottom: none; }
-.oem { font-size: 20px; }
-.onm { font-weight: 600; font-size: 14px; flex: 1; color: #2a3328; }
-.orem { color: #c0a888; font-size: 22px; cursor: pointer; padding: 4px 8px; }
-.btns { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
-.btn-g { background: #c44e2a; color: white; border: none; border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; }
-.btn-s { background: #fdeede; color: #c44e2a; border: none; border-radius: 12px; padding: 13px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; }
-.sendview { display: none; }
-.sendview.on { display: block; }
-.sendhead { text-align: center; margin-bottom: 14px; }
-.sendicon { font-size: 42px; }
-.instruct { background: #fef0d4; border: 1px solid #f0d8a4; border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; font-size: 13px; color: #6a4828; }
-.instruct b { display: block; margin-bottom: 6px; font-size: 14px; }
-.istep { display: flex; gap: 8px; margin-top: 7px; align-items: flex-start; }
-.istepn { background: #c44e2a; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
-.msgbox { width: 100%; background: #fdeede; border: 2px solid #f0c8a8; border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 600; line-height: 1.7; color: #2a3328; resize: none; min-height: 110px; margin-bottom: 10px; -webkit-user-select: all; user-select: all; }
-.msgbox:focus { outline: none; }
-.copybtn { width: 100%; background: #c44e2a; color: white; border: none; border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; margin-bottom: 10px; }
-.copybtn.done { background: #2c5e3f; }
 
 /* Recipe overlay */
 .rmovl { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 400; align-items: flex-end; }
@@ -191,15 +149,9 @@ body.cook .rh { display: block; }
 <body>
 
 <header>
-  <div class="header-top">
-    <div>
-      <h1 id="htitle">Bandera Kitchen</h1>
-      <p id="hsub">Tap what sounds good — we'll take care of the rest</p>
-    </div>
-    <div class="mode-toggle">
-      <button class="mode-btn active" id="eatBtn" onclick="setMode('eat')">Eat</button>
-      <button class="mode-btn" id="cookBtn" onclick="setMode('cook')">Cook</button>
-    </div>
+  <div>
+    <h1>Bandera Kitchen</h1>
+    <p>Browse what's on hand and find something to make</p>
   </div>
 </header>
 
@@ -471,44 +423,6 @@ body.cook .rh { display: block; }
 </div>
 
 <div class="oo-updated">Last verified: April 2026 · Order Out is for browsing only and does not save selections</div>
-</div>
-
-<!-- ORDER BAR -->
-<div class="obar" id="obar">
-  <button class="order-btn" id="oBtn" onclick="openOrder()" disabled>
-    <span id="oLbl">My Selections</span>
-    <span class="bdg" id="oCnt">0</span>
-  </button>
-</div>
-
-<!-- ORDER OVERLAY -->
-<div class="overlay" id="ordOvl" onclick="bgClose(event,'ordOvl')">
-  <div class="sheet">
-    <div class="handle"></div>
-    <div id="revView">
-      <h2>Your Selections</h2>
-      <p>Tap × to remove anything, then press Send.</p>
-      <div id="oItems"></div>
-      <div class="btns">
-        <button class="btn-g" onclick="showSend()">Send My Request</button>
-        <button class="btn-s" onclick="closeOvl('ordOvl')">Keep Browsing</button>
-      </div>
-    </div>
-    <div class="sendview" id="sendView">
-      <div class="sendhead"><div class="sendicon">📋</div><h2>Ready to Send!</h2><p>Copy and paste into Messenger.</p></div>
-      <div class="instruct">
-        <b>3 easy steps:</b>
-        <div class="istep"><div class="istepn">1</div><div>Tap <b>Copy Message</b> below</div></div>
-        <div class="istep"><div class="istepn">2</div><div>Open <b>Messenger</b> and go to the family group</div></div>
-        <div class="istep"><div class="istepn">3</div><div>Long-press the text field, tap <b>Paste</b>, then Send</div></div>
-      </div>
-      <textarea class="msgbox" id="msgBox" readonly></textarea>
-      <button class="copybtn" id="copyBtn" onclick="doCopy()">Copy Message</button>
-      <button class="btn-s" onclick="backToReview()">Edit Selections</button>
-      <br><br>
-      <button class="btn-s" onclick="resetAll()">Start Over</button>
-    </div>
-  </div>
 </div>
 
 <!-- RECIPE OVERLAY -->
@@ -1091,13 +1005,340 @@ var RECIPES = [
       "Pull a bar from the freezer. Unwrap. Eat."
     ],
     tip:"Mango bars are pure fruit, fudge bars are low fat. Both are weeknight wins."
+  },
+
+  // ===== ADDITIONAL BREAKFAST =====
+  {
+    id:"r-cereal-milk", name:"Cereal & Milk", emoji:"🥣",
+    sub:"Pick your favorite from the cabinet", meal:"breakfast",
+    diff:"easy", timeMin:2, serves:1,
+    ingredients:[
+      {name:"Any cereal (Fruity Pebbles, Lucky Charms, Cheerios, Corn Flakes, Special K, Raisin Bran, S'mores)", tag:"cereal"},
+      {name:"Milk", tag:"milk"}
+    ],
+    steps:[
+      "Pour cereal into a bowl.",
+      "Add milk. Eat before it gets soggy."
+    ],
+    tip:"For a sweeter mix try half Fruity Pebbles, half Cheerios. For more fiber go Raisin Bran or Fiber One."
+  },
+  {
+    id:"r-toast-butter", name:"Buttered Toast", emoji:"🍞",
+    sub:"The simplest breakfast", meal:"breakfast",
+    diff:"easy", timeMin:3, serves:1,
+    ingredients:[
+      {name:"2 slices bread", tag:"bread"},
+      {name:"Butter", tag:"butter"}
+    ],
+    steps:[
+      "Toast the bread to your liking.",
+      "Spread butter while still warm so it melts in. Done."
+    ]
+  },
+  {
+    id:"r-toast-honey", name:"Honey Toast", emoji:"🍯",
+    sub:"Toast, butter, drizzle of honey", meal:"breakfast",
+    diff:"easy", timeMin:3, serves:1,
+    ingredients:[
+      {name:"2 slices bread", tag:"bread"},
+      {name:"Butter", tag:"butter"},
+      {name:"Honey", tag:"honey"}
+    ],
+    steps:[
+      "Toast the bread.",
+      "Spread butter on warm toast.",
+      "Drizzle honey across the top. Cut and serve."
+    ]
+  },
+  {
+    id:"r-boost-shake", name:"Boost Shake", emoji:"🥤",
+    sub:"Grab and go protein", meal:"breakfast",
+    diff:"easy", timeMin:1, serves:1,
+    ingredients:[
+      {name:"1 Boost Nutritional Shake", tag:"boost"}
+    ],
+    steps:[
+      "Shake the bottle well.",
+      "Open. Drink. That's it."
+    ],
+    tip:"Best chilled. Pairs well with a piece of toast or fruit."
+  },
+  {
+    id:"r-chocolate-milk", name:"Chocolate Milk", emoji:"🥛",
+    sub:"Cocoa powder + milk classic", meal:"breakfast",
+    diff:"easy", timeMin:3, serves:1,
+    ingredients:[
+      {name:"1 cup milk", tag:"milk"},
+      {name:"1 tbsp Hershey's cocoa powder", tag:"cocoa"},
+      {name:"2 tbsp sugar (or honey to taste)", tag:"honey"}
+    ],
+    steps:[
+      "In a glass, mix cocoa and sugar with a splash of warm water until smooth (this prevents lumps).",
+      "Pour in cold milk and stir well. Done."
+    ],
+    tip:"Add a scoop of malted milk powder for an old-school chocolate malt."
+  },
+  {
+    id:"r-cottage-applesauce-bowl", name:"Cottage Cheese Breakfast Bowl", emoji:"🍎",
+    sub:"Fast protein-packed start", meal:"breakfast",
+    diff:"easy", timeMin:3, serves:1,
+    ingredients:[
+      {name:"1 cup cottage cheese", tag:"cottage cheese"},
+      {name:"1/4 cup applesauce", tag:"applesauce"},
+      {name:"Sprinkle of cinnamon", tag:"cinnamon", pantry:true},
+      {name:"Drizzle of honey (optional)", tag:"honey"}
+    ],
+    steps:[
+      "Scoop cottage cheese into a bowl.",
+      "Top with applesauce, sprinkle cinnamon, drizzle honey if you like."
+    ]
+  },
+
+  // ===== ADDITIONAL LUNCH =====
+  {
+    id:"r-ham-sandwich", name:"Ham Sandwich", emoji:"🥪",
+    sub:"Buddig honey ham, classic", meal:"lunch",
+    diff:"easy", timeMin:5, serves:4,
+    ingredients:[
+      {name:"8 slices bread", tag:"bread"},
+      {name:"Buddig honey ham (4 servings)", tag:"ham"},
+      {name:"Mustard or mayo", tag:"mustard"},
+      {name:"Cheese, lettuce, tomato (optional)", tag:"cheese", pantry:false}
+    ],
+    steps:[
+      "Lay out bread. Spread mustard or mayo.",
+      "Layer ham on the bottom slice. Add cheese, lettuce, or tomato if you have them.",
+      "Top, slice diagonally, and serve."
+    ]
+  },
+  {
+    id:"r-canned-soup", name:"Quick Canned Soup", emoji:"🥫",
+    sub:"Campbell's Double Noodle straight up", meal:"lunch",
+    diff:"easy", timeMin:8, serves:2,
+    ingredients:[
+      {name:"1 can Campbell's Double Noodle Soup", tag:"canned soup"},
+      {name:"1 can water (per the can directions)", tag:"water"},
+      {name:"Saltines on the side", tag:"saltines"}
+    ],
+    steps:[
+      "Pour soup into a small pot.",
+      "Add 1 can of water. Stir.",
+      "Heat over medium until simmering, about 5 minutes. Serve with saltines."
+    ]
+  },
+  {
+    id:"r-saltines-applesauce", name:"Saltines & Applesauce", emoji:"🍏",
+    sub:"Easy light lunch", meal:"lunch",
+    diff:"easy", timeMin:2, serves:1,
+    ingredients:[
+      {name:"Saltine crackers", tag:"saltines"},
+      {name:"Mott's applesauce", tag:"applesauce"}
+    ],
+    steps:[
+      "Open a sleeve of saltines and a cup of applesauce.",
+      "Dip or eat side by side. That's it."
+    ]
+  },
+
+  // ===== ADDITIONAL DINNER =====
+  {
+    id:"r-cuban-beans-rice", name:"Cuban Black Beans & Rice", emoji:"🇨🇺",
+    sub:"Vigo packet, complete meal in 25 min", meal:"dinner",
+    diff:"easy", timeMin:25, serves:4,
+    ingredients:[
+      {name:"1 packet Vigo Black Beans & Rice (Cuban)", tag:"black beans and rice"},
+      {name:"2.5 cups water", tag:"water"},
+      {name:"2 tbsp olive oil", tag:"olive oil"}
+    ],
+    steps:[
+      "Combine packet contents, water, and olive oil in a pot. Stir.",
+      "Bring to a boil over high heat.",
+      "Reduce to low, cover, and simmer 20-25 minutes until rice is tender and water is absorbed.",
+      "Fluff and serve. Add a splash of vinegar or hot sauce if you like."
+    ],
+    tip:"Brown some chopped ham or sausage first in the pot before adding the rest for an easy upgrade."
+  },
+  {
+    id:"r-red-beans-rice", name:"New Orleans Red Beans & Rice", emoji:"🎷",
+    sub:"Vigo packet, set it and forget it", meal:"dinner",
+    diff:"easy", timeMin:25, serves:4,
+    ingredients:[
+      {name:"1 packet Vigo Red Beans & Rice (New Orleans)", tag:"red beans and rice"},
+      {name:"2.5 cups water", tag:"water"},
+      {name:"2 tbsp olive oil", tag:"olive oil"}
+    ],
+    steps:[
+      "Combine packet, water, and oil in a pot. Stir.",
+      "Bring to a boil. Reduce to low, cover, simmer 20-25 min.",
+      "Fluff. Serve hot with hot sauce on the side."
+    ],
+    tip:"Add sliced sausage or leftover ham for a heartier dinner."
+  },
+  {
+    id:"r-chicken-alfredo", name:"Chicken Alfredo", emoji:"🍝",
+    sub:"Jarred sauce, weeknight win", meal:"dinner",
+    diff:"easy", timeMin:25, serves:4,
+    ingredients:[
+      {name:"12 oz pasta (spaghetti, bow ties, or egg noodles)", tag:"pasta"},
+      {name:"1 jar Kroger Roasted Garlic Alfredo Sauce", tag:"alfredo sauce"},
+      {name:"1.5 lb chicken breast, cubed (store run)", tag:"chicken breast", pantry:false},
+      {name:"2 tbsp olive oil", tag:"olive oil"},
+      {name:"Salt, pepper, garlic powder", tag:"salt", pantry:true}
+    ],
+    steps:[
+      "Bring a pot of salted water to a boil. Cook pasta per package, drain.",
+      "Meanwhile, season cubed chicken with salt, pepper, garlic powder.",
+      "Heat olive oil in a large skillet on medium-high. Cook chicken 6-8 min until golden and cooked through (165°F).",
+      "Pour in alfredo sauce, reduce heat to low, simmer 2-3 min.",
+      "Toss pasta with the sauce and chicken. Serve hot."
+    ],
+    tip:"Add frozen broccoli to the boiling pasta water for the last 3 min — instant veggie side."
+  },
+  {
+    id:"r-ham-alfredo", name:"Ham Alfredo Pasta", emoji:"🍝",
+    sub:"All-pantry dinner, no store run", meal:"dinner",
+    diff:"easy", timeMin:20, serves:4,
+    ingredients:[
+      {name:"12 oz pasta (bow ties or egg noodles)", tag:"pasta"},
+      {name:"1 jar Kroger Roasted Garlic Alfredo Sauce", tag:"alfredo sauce"},
+      {name:"Buddig honey ham (8 oz, chopped)", tag:"ham"},
+      {name:"2 tbsp butter", tag:"butter"},
+      {name:"Salt and pepper", tag:"salt", pantry:true}
+    ],
+    steps:[
+      "Boil pasta per package, drain.",
+      "Melt butter in the same pot. Add chopped ham, warm 1-2 min.",
+      "Pour in alfredo sauce, stir, simmer 2 min.",
+      "Toss pasta with the sauce. Season with pepper. Serve hot."
+    ],
+    tip:"This is one of the rare dinners that uses zero store-run ingredients."
+  },
+  {
+    id:"r-easy-lasagna", name:"Easy Lasagna", emoji:"🍅",
+    sub:"Oven-ready noodles, no boiling", meal:"dinner",
+    diff:"med", timeMin:60, serves:4,
+    ingredients:[
+      {name:"1 box Barilla Oven-Ready Lasagne (9 oz)", tag:"lasagne"},
+      {name:"1 jar marinara sauce", tag:"marinara"},
+      {name:"1 lb ground beef (store run)", tag:"ground beef", pantry:false},
+      {name:"15 oz ricotta cheese (store run)", tag:"ricotta", pantry:false},
+      {name:"2 cups shredded mozzarella (store run)", tag:"mozzarella", pantry:false},
+      {name:"1 egg", tag:"egg"},
+      {name:"Salt, pepper, oregano", tag:"salt", pantry:true}
+    ],
+    steps:[
+      "Preheat oven to 375°F.",
+      "Brown ground beef in a skillet, drain. Stir in marinara, salt, pepper, oregano.",
+      "Mix ricotta with the egg in a bowl.",
+      "In a 9x13 dish: thin layer of meat sauce, then noodles, ricotta, mozzarella, sauce. Repeat. End with noodles, sauce, and mozzarella on top.",
+      "Cover with foil. Bake 40 min. Uncover, bake 10 more min until bubbly and golden.",
+      "Rest 10 min before slicing. Serve."
+    ],
+    tip:"Oven-ready noodles need plenty of sauce around them to soften — don't skimp."
+  },
+  {
+    id:"r-easy-chili", name:"Easy Beef Chili", emoji:"🌶️",
+    sub:"Chili-O packet does the work", meal:"dinner",
+    diff:"easy", timeMin:30, serves:4,
+    ingredients:[
+      {name:"1 lb ground beef (store run)", tag:"ground beef", pantry:false},
+      {name:"1 packet French's Chili-O Original Seasoning", tag:"chili seasoning"},
+      {name:"1 can diced tomatoes (store run)", tag:"diced tomatoes", pantry:false},
+      {name:"1 can kidney or black beans, drained (store run)", tag:"beans", pantry:false},
+      {name:"1 cup water", tag:"water"},
+      {name:"Saltines or shredded cheese on top", tag:"saltines"}
+    ],
+    steps:[
+      "Brown ground beef in a large pot over medium-high heat. Drain fat.",
+      "Add Chili-O seasoning, diced tomatoes (with juice), beans, and water. Stir.",
+      "Bring to a boil. Reduce heat, simmer 20 min, stirring occasionally.",
+      "Serve in bowls topped with shredded cheese, crackers, or sour cream."
+    ],
+    tip:"Doubles or triples easily for leftovers — chili is even better the next day."
+  },
+  {
+    id:"r-bbq-ham-sliders", name:"BBQ Ham Sliders", emoji:"🍔",
+    sub:"Hawaiian rolls + ham + Kraft BBQ", meal:"dinner",
+    diff:"easy", timeMin:20, serves:4,
+    ingredients:[
+      {name:"12 King's Hawaiian rolls", tag:"hawaiian rolls"},
+      {name:"Buddig honey ham (12 oz)", tag:"ham"},
+      {name:"Swiss or American cheese (12 slices, store run)", tag:"cheese", pantry:false},
+      {name:"1/3 cup Kraft BBQ sauce", tag:"bbq sauce"},
+      {name:"3 tbsp butter, melted", tag:"butter"}
+    ],
+    steps:[
+      "Preheat oven to 350°F. Slice the whole pack of rolls horizontally without separating, set bottom slab in a baking dish.",
+      "Layer ham, drizzle BBQ sauce, layer cheese. Top with the upper slab of rolls.",
+      "Brush melted butter over the tops.",
+      "Cover with foil, bake 12 min. Uncover, bake 3-5 more min until golden. Cut into 12 sliders."
+    ],
+    tip:"Same technique as ham & cheese sliders, just with BBQ sauce in the middle."
+  },
+  {
+    id:"r-teriyaki-noodles", name:"Teriyaki Noodles", emoji:"🍜",
+    sub:"5 Dragons sauce, fast skillet meal", meal:"dinner",
+    diff:"easy", timeMin:20, serves:4,
+    ingredients:[
+      {name:"12 oz egg noodles or spaghetti", tag:"pasta"},
+      {name:"1/2 cup 5 Dragons Sweet Ginger Teriyaki", tag:"teriyaki"},
+      {name:"2 tbsp soy sauce", tag:"soy sauce"},
+      {name:"2 tbsp olive oil or canola oil", tag:"olive oil"},
+      {name:"Buddig turkey or ham (8 oz, torn) OR cooked chicken", tag:"turkey"},
+      {name:"Frozen veg (peas, carrots, broccoli) optional", tag:"frozen veg", pantry:false}
+    ],
+    steps:[
+      "Cook noodles per package, drain.",
+      "Heat oil in a large skillet on medium-high. Add torn turkey/ham and any frozen veg, cook 3-4 min.",
+      "Add cooked noodles to the pan.",
+      "Pour in teriyaki and soy sauce. Toss everything together for 1-2 min until glossy. Serve hot."
+    ],
+    tip:"Add a fried egg on top for an authentic feel."
+  },
+
+  // ===== ADDITIONAL SNACKS =====
+  {
+    id:"r-chips", name:"Chips", emoji:"🥔",
+    sub:"Cheetos, Lay's, or Pringles", meal:"snack",
+    diff:"easy", timeMin:1, serves:1,
+    ingredients:[
+      {name:"Bag of Cheetos, Lay's, OR Pringles cup", tag:"chips"}
+    ],
+    steps:[
+      "Open bag. Eat chips. Try not to eat the whole bag."
+    ]
+  },
+  {
+    id:"r-cereal-snack", name:"Cereal Snack", emoji:"🥣",
+    sub:"Dry cereal as a handful snack", meal:"snack",
+    diff:"easy", timeMin:1, serves:1,
+    ingredients:[
+      {name:"Any cereal", tag:"cereal"}
+    ],
+    steps:[
+      "Pour a small bowl or handful of cereal. Eat dry, no milk needed."
+    ],
+    tip:"Lucky Charms, Fruity Pebbles, and S'mores all work great as a sweet dry snack."
+  },
+  {
+    id:"r-malted-chocolate-milk", name:"Chocolate Malt Milk", emoji:"🍫",
+    sub:"Old-school soda fountain style", meal:"snack",
+    diff:"easy", timeMin:3, serves:1,
+    ingredients:[
+      {name:"1 cup cold milk", tag:"milk"},
+      {name:"2 tbsp Carnation chocolate malted milk powder", tag:"malted milk"}
+    ],
+    steps:[
+      "Pour milk into a glass.",
+      "Add malted milk powder. Stir vigorously until fully dissolved.",
+      "Drink immediately — best while still frothy on top."
+    ],
+    tip:"For a thicker malt, blend with a scoop of vanilla ice cream."
   }
 ];
 
 
 /* ---------- STATE ---------- */
-var sel = [];
-var cookMode = false;
 var matchMode = "all"; // 'all' or 'strict'
 var filters = { meal:"any", diff:"any", time:"any" };
 var SHOPKEY = "bk_shop_v1";
@@ -1445,7 +1686,7 @@ function clearShopChecks() {
   renderShop();
 }
 
-/* ---------- TABS / MODE ---------- */
+/* ---------- TABS ---------- */
 function go(id, el) {
   var tabs = document.querySelectorAll(".tab");
   for (var i=0; i<tabs.length; i++) tabs[i].classList.remove("on");
@@ -1453,105 +1694,11 @@ function go(id, el) {
   for (var i=0; i<secs.length; i++) secs[i].classList.remove("on");
   el.classList.add("on");
   document.getElementById("tab-" + id).classList.add("on");
-  // Hide order bar on Inventory and Order Out (no selections happen there)
-  var hideOrder = (id === "inventory" || id === "orderout" || id === "shop");
-  document.getElementById("obar").style.display = hideOrder ? "none" : "block";
-  // Adjust body padding when bar is hidden
-  document.body.style.paddingBottom = hideOrder ? "20px" : "110px";
 }
 
-function setMode(m) {
-  cookMode = (m === "cook");
-  document.body.classList.toggle("cook", cookMode);
-  document.getElementById("eatBtn").classList.toggle("active", !cookMode);
-  document.getElementById("cookBtn").classList.toggle("active", cookMode);
-  document.getElementById("htitle").textContent = cookMode ? "Cook Mode" : "Bandera Kitchen";
-  document.getElementById("hsub").textContent = cookMode
-    ? "Tap any recipe to see how to make it"
-    : "Tap what sounds good — we'll take care of the rest";
-  document.getElementById("oLbl").textContent = cookMode ? "Cooking Plan" : "My Selections";
-}
-
-/* ---------- ORDER / MESSENGER FLOW ----------
-   In Eat mode, tapping recipe cards opens the recipe overlay (not a selection).
-   The "My Selections" bar is preserved for future use but currently has no items.
-   For now we treat the recipe tap as info-only; selections happen by long-press.
-   To keep things simple in v1, we'll repurpose: clicking a recipe ALWAYS opens detail.
-   The Send-to-Messenger flow is preserved so we can add a "Send this for dinner!" button on the recipe overlay later. */
-
-function openOrder() {
-  buildReview();
-  document.getElementById("revView").style.display = "block";
-  document.getElementById("sendView").classList.remove("on");
-  document.getElementById("ordOvl").classList.add("on");
-}
-function buildReview() {
-  var h = "";
-  for (var i=0; i<sel.length; i++) {
-    var nm = sel[i].n.replace(/'/g, "\\'");
-    h += '<div class="oitem"><span class="oem">' + sel[i].e + '</span><span class="onm">' + esc(sel[i].n) + '</span><span class="orem" onclick="removeItem(\'' + nm + '\')">×</span></div>';
-  }
-  if (sel.length === 0) {
-    h = '<p style="text-align:center;padding:20px 0;color:#a08868;">No selections yet. Tap recipes from Suggestions or Cook to add them.</p>';
-  }
-  document.getElementById("oItems").innerHTML = h;
-}
-function removeItem(n) {
-  var tmp = [];
-  for (var i=0; i<sel.length; i++) { if (sel[i].n !== n) tmp.push(sel[i]); }
-  sel = tmp;
-  updateBar();
-  if (sel.length === 0) closeOvl("ordOvl"); else buildReview();
-}
-function updateBar() {
-  document.getElementById("oCnt").textContent = sel.length;
-  document.getElementById("oBtn").disabled = (sel.length === 0);
-}
-function showSend() {
-  var lines = "";
-  for (var i=0; i<sel.length; i++) {
-    if (i > 0) lines += "\n";
-    lines += sel[i].e + " " + sel[i].n;
-  }
-  document.getElementById("msgBox").value = "Dinner thoughts:\n\n" + lines + "\n\nWhat do you think?";
-  document.getElementById("copyBtn").textContent = "Copy Message";
-  document.getElementById("copyBtn").classList.remove("done");
-  document.getElementById("revView").style.display = "none";
-  document.getElementById("sendView").classList.add("on");
-}
-function backToReview() {
-  document.getElementById("revView").style.display = "block";
-  document.getElementById("sendView").classList.remove("on");
-  buildReview();
-}
-function doCopy() {
-  var box = document.getElementById("msgBox");
-  var btn = document.getElementById("copyBtn");
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(box.value).then(function(){ copied(btn); }).catch(function(){ fallbackCopy(box, btn); });
-  } else { fallbackCopy(box, btn); }
-}
-function fallbackCopy(box, btn) {
-  box.removeAttribute("readonly");
-  box.select();
-  box.setSelectionRange(0, 99999);
-  try { document.execCommand("copy"); copied(btn); }
-  catch(e) { btn.textContent = "Select text above and copy manually"; }
-  box.setAttribute("readonly", true);
-  if (window.getSelection) window.getSelection().removeAllRanges();
-}
-function copied(btn) {
-  btn.textContent = "Copied! Now paste into Messenger";
-  btn.classList.add("done");
-  setTimeout(function(){ btn.textContent = "Copy Message"; btn.classList.remove("done"); }, 4000);
-}
+/* ---------- OVERLAY HELPERS (used by recipe overlay) ---------- */
 function closeOvl(id) { document.getElementById(id).classList.remove("on"); }
 function bgClose(ev, id) { if (ev.target === document.getElementById(id)) closeOvl(id); }
-function resetAll() {
-  sel = [];
-  updateBar();
-  closeOvl("ordOvl");
-}
 
 /* ---------- INIT ---------- */
 window.addEventListener("DOMContentLoaded", function(){
@@ -1559,9 +1706,6 @@ window.addEventListener("DOMContentLoaded", function(){
   renderSuggestions();
   renderCook();
   renderShop();
-  // Inventory tab is the default landing tab; hide order bar there.
-  document.getElementById("obar").style.display = "none";
-  document.body.style.paddingBottom = "20px";
 });
 </script>
 </body>
