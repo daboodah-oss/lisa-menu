@@ -607,6 +607,7 @@ var INVENTORY = [
   {name:"Iodized Salt", cat:"Spices & Seasonings", added:"2026-04-25", tags:["salt","iodized salt","table salt"]},
   {name:"Kernel Season's Garlic Parmesan Popcorn Seasoning", cat:"Spices & Seasonings", added:"2026-04-25", tags:["popcorn seasoning","garlic parmesan seasoning"]},
   {name:"Kernel Season's White Cheddar Popcorn Seasoning", cat:"Spices & Seasonings", added:"2026-04-25", tags:["popcorn seasoning","white cheddar seasoning"]},
+  {name:"French's Chili-O Original Seasoning Mix", cat:"Spices & Seasonings", added:"2026-04-25", tags:["chili seasoning","chili mix","chili-o"]},
 
   // Baking
   {name:"Kroger Baking Powder", cat:"Baking", added:"2026-04-25", tags:["baking powder"]},
@@ -622,6 +623,8 @@ var INVENTORY = [
   {name:"Kroger Pure Canola Oil", cat:"Oils & Cooking Sprays", added:"2026-04-25", tags:["canola oil","vegetable oil","oil"]},
 
   // Condiments (additions)
+  {name:"Kroger Roasted Garlic Alfredo Sauce", cat:"Condiments", added:"2026-04-25", tags:["alfredo sauce","alfredo","cream sauce"]},
+  {name:"Newman's Own Marinara Sauce", cat:"Condiments", added:"2026-04-25", tags:["marinara","marinara sauce","pasta sauce","tomato sauce"]},
   {name:"Lea & Perrins Worcestershire Sauce", cat:"Condiments", added:"2026-04-25", tags:["worcestershire","worcestershire sauce"]},
   {name:"5 Dragons Sweet Ginger Teriyaki Sauce", cat:"Condiments", added:"2026-04-25", tags:["teriyaki","teriyaki sauce","ginger teriyaki"]},
   {name:"Rose's Grenadine Syrup", cat:"Condiments", added:"2026-04-25", tags:["grenadine","grenadine syrup"]},
@@ -632,6 +635,16 @@ var INVENTORY = [
   {name:"Kroger Soy Sauce", cat:"Condiments", added:"2026-04-25", tags:["soy sauce","soy"]},
   {name:"Red Wine Vinegar", cat:"Condiments", added:"2026-04-25", tags:["red wine vinegar","vinegar"]},
   {name:"Nestle Carnation Chocolate Malted Milk", cat:"Condiments", added:"2026-04-25", tags:["malted milk","chocolate malted milk","carnation malted milk"]},
+
+  // Pasta (additions)
+  {name:"No Yolks Extra Broad Egg White Pasta", cat:"Breads & Grains", added:"2026-04-25", tags:["egg noodles","noodles","pasta","broad noodles","no yolks"]},
+  {name:"Barilla Oven-Ready Lasagne", cat:"Breads & Grains", added:"2026-04-25", tags:["lasagne","lasagna","oven ready lasagna","pasta"]},
+  {name:"Kroger Bow Ties Pasta", cat:"Breads & Grains", added:"2026-04-25", tags:["bow ties","farfalle","pasta","bow tie pasta"]},
+
+  // Dry Goods & Beans
+  {name:"La Preferida Black Beans (dry)", cat:"Soups & Broths", added:"2026-04-25", tags:["black beans","dried black beans","beans"]},
+  {name:"Vigo Black Beans & Rice (Cuban Recipe)", cat:"Soups & Broths", added:"2026-04-25", tags:["black beans and rice","black beans rice","vigo","rice and beans"]},
+  {name:"Vigo Red Beans & Rice (New Orleans Recipe)", cat:"Soups & Broths", added:"2026-04-25", tags:["red beans and rice","red beans rice","vigo","rice and beans"]},
 
   // Cereals & Breakfast
   {name:"Post Fruity Pebbles", cat:"Cereals & Breakfast", added:"2026-04-25", tags:["fruity pebbles","cereal"]},
@@ -877,7 +890,7 @@ var RECIPES = [
     diff:"easy", timeMin:20, serves:4,
     ingredients:[
       {name:"1 lb spaghetti", tag:"spaghetti"},
-      {name:"1 jar marinara sauce (store run)", tag:"marinara", pantry:false},
+      {name:"1 jar marinara sauce", tag:"marinara", pantry:true},
       {name:"Salt for pasta water", tag:"salt", pantry:true},
       {name:"Parmesan to finish (store run)", tag:"parmesan", pantry:false},
       {name:"Olive oil (optional)", tag:"olive oil", pantry:true}
@@ -898,7 +911,7 @@ var RECIPES = [
     ingredients:[
       {name:"1 lb spaghetti", tag:"spaghetti"},
       {name:"1 lb ground beef (store run)", tag:"ground beef", pantry:false},
-      {name:"1 jar marinara sauce (store run)", tag:"marinara", pantry:false},
+      {name:"1 jar marinara sauce", tag:"marinara", pantry:true},
       {name:"1 small onion, diced (store run)", tag:"onion", pantry:false},
       {name:"2 cloves garlic, minced (store run)", tag:"garlic", pantry:false},
       {name:"Salt, pepper, Italian seasoning", tag:"salt", pantry:true}
@@ -1353,7 +1366,6 @@ var SHOP_AUTO = [
   { name:"Italian sausage", why:"Sheet pan dinner" },
   { name:"Ground beef", why:"Meatloaf, meat sauce" },
   { name:"Chicken thighs (bone-in, skin-on)", why:"Roasted chicken thighs" },
-  { name:"Marinara sauce (jar)", why:"Spaghetti night" },
   { name:"Shredded cheese", why:"Grilled cheese, pasta bake, sandwiches" },
   { name:"Sliced cheese (Swiss/American)", why:"Sandwiches, sliders, melts" },
   { name:"Mayo", why:"Sandwiches, tuna salad" },
