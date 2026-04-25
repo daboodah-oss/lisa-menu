@@ -66,6 +66,9 @@ header p { color: rgba(255,255,255,0.85); font-size: 12px; margin-top: 3px; }
 .chip-toggle { display: inline-flex; background: #f4e8d4; border-radius: 14px; padding: 3px; gap: 2px; }
 .chip-toggle .chip { padding: 4px 11px; border: none; background: transparent; }
 .chip-toggle .chip.on { background: #c44e2a; color: white; }
+.cat-chips { display: flex; overflow-x: auto; gap: 6px; padding: 2px 2px 10px; scrollbar-width: none; margin-bottom: 2px; }
+.cat-chips::-webkit-scrollbar { display: none; }
+.cat-chips .chip { flex-shrink: 0; }
 
 /* Shop tab */
 .shop-section { margin-bottom: 16px; }
@@ -166,6 +169,7 @@ header p { color: rgba(255,255,255,0.85); font-size: 12px; margin-top: 3px; }
 <!-- INVENTORY TAB -->
 <div class="sec on" id="tab-inventory">
 <div class="snote">📋 What's in our kitchen right now</div>
+<div class="cat-chips" id="invCatChips"></div>
 <div class="inv-toolbar">
   <input type="text" class="inv-search" id="invSearch" placeholder="Search inventory..." oninput="renderInv()">
   <select class="inv-sort" id="invSort" onchange="renderInv()">
@@ -236,6 +240,13 @@ header p { color: rgba(255,255,255,0.85); font-size: 12px; margin-top: 3px; }
 <!-- COOK TAB -->
 <div class="sec" id="tab-cook">
 <div class="snote">👨‍🍳 Tap any recipe to see how to make it</div>
+<div class="cat-chips" id="cookMealChips">
+  <span class="chip on" onclick="setCookMeal('all',this)">All</span>
+  <span class="chip" onclick="setCookMeal('breakfast',this)">🥞 Breakfast</span>
+  <span class="chip" onclick="setCookMeal('lunch',this)">🥪 Lunch</span>
+  <span class="chip" onclick="setCookMeal('dinner',this)">🍽️ Dinner</span>
+  <span class="chip" onclick="setCookMeal('snack',this)">🍿 Snack</span>
+</div>
 <div id="cookGrid" class="grid"></div>
 </div>
 
@@ -261,11 +272,21 @@ header p { color: rgba(255,255,255,0.85); font-size: 12px; margin-top: 3px; }
 
 <!-- ORDER OUT TAB -->
 <div class="sec" id="tab-orderout">
+<div class="cat-chips" id="ooCuisineChips">
+  <span class="chip on" onclick="setOOCuisine('all',this)">All</span>
+  <span class="chip" onclick="setOOCuisine('best',this)">🏆 Best</span>
+  <span class="chip" onclick="setOOCuisine('burgers',this)">🍔 Burgers</span>
+  <span class="chip" onclick="setOOCuisine('asian',this)">🥡 Asian</span>
+  <span class="chip" onclick="setOOCuisine('mexican',this)">🌮 Mexican</span>
+  <span class="chip" onclick="setOOCuisine('breakfast',this)">🥞 Breakfast</span>
+  <span class="chip" onclick="setOOCuisine('italian',this)">🍝 Italian</span>
+  <span class="chip" onclick="setOOCuisine('fast',this)">⚡ Fast</span>
+</div>
 <div class="oo-note">🏠 Family-friendly local picks for Fishers / Noblesville · Verified April 2026</div>
 
-<div class="oo-label">🏆 Best Picks</div>
+<div class="oo-label" data-cuisine="best">🏆 Best Picks</div>
 
-<div class="oo-card">
+<div class="oo-card" data-cuisine="best">
   <div class="oo-header"><div class="oo-em">🥪</div><div><div class="oo-name">McAlister's Deli</div><span class="oo-tag fam">✅ Family Favorite</span></div></div>
   <div class="oo-order"><b>Try:</b> Choose Two combo (half sandwich + cup of soup or salad). McAlister's Club, Spud Max, French Dip. Their sweet tea is famous.</div>
   <div class="oo-btns">
@@ -274,7 +295,7 @@ header p { color: rgba(255,255,255,0.85); font-size: 12px; margin-top: 3px; }
   </div>
 </div>
 
-<div class="oo-card">
+<div class="oo-card" data-cuisine="best">
   <div class="oo-header"><div class="oo-em">🐔</div><div><div class="oo-name">Chick-fil-A</div><span class="oo-tag best">✅ Reliable</span></div></div>
   <div class="oo-order"><b>Try:</b> Spicy Deluxe sandwich, Chicken Sandwich, 12-pc Nuggets. Mac & Cheese is excellent. Frosted Lemonade for dessert.</div>
   <div class="oo-btns">
@@ -283,7 +304,7 @@ header p { color: rgba(255,255,255,0.85); font-size: 12px; margin-top: 3px; }
   </div>
 </div>
 
-<div class="oo-card">
+<div class="oo-card" data-cuisine="best">
   <div class="oo-header"><div class="oo-em">🍕</div><div><div class="oo-name">Chicago's Pizza (Fishers)</div><span class="oo-tag best">✅ Best Pizza</span></div></div>
   <div class="oo-order"><b>Try:</b> Deep dish or stuffed pizza is the move. Italian beef sandwich, garlic bread. A solid local spot, not chain pizza.</div>
   <div class="oo-btns">
@@ -292,9 +313,9 @@ header p { color: rgba(255,255,255,0.85); font-size: 12px; margin-top: 3px; }
   </div>
 </div>
 
-<div class="oo-label">🍔 Burgers & Comfort</div>
+<div class="oo-label" data-cuisine="burgers">🍔 Burgers & Comfort</div>
 
-<div class="oo-card">
+<div class="oo-card" data-cuisine="burgers">
   <div class="oo-header"><div class="oo-em">🌭</div><div><div class="oo-name">Portillo's Fishers</div><span class="oo-tag fam">✅ Family Favorite</span></div></div>
   <div class="oo-order"><b>Try:</b> Italian Beef (dipped), Chicago Dog, Char-Grilled Burger, cheese fries. Chocolate cake shake is a must.</div>
   <div class="oo-btns">
@@ -303,7 +324,7 @@ header p { color: rgba(255,255,255,0.85); font-size: 12px; margin-top: 3px; }
   </div>
 </div>
 
-<div class="oo-card">
+<div class="oo-card" data-cuisine="burgers">
   <div class="oo-header"><div class="oo-em">🍔</div><div><div class="oo-name">Culver's</div><span class="oo-tag fam">✅ Family Favorite</span></div></div>
   <div class="oo-order"><b>Try:</b> ButterBurger Deluxe, Wisconsin Cheese Curds, Chicken Tenders. Frozen Custard Concrete — Flavor of the Day rotates.</div>
   <div class="oo-btns">
@@ -311,7 +332,7 @@ header p { color: rgba(255,255,255,0.85); font-size: 12px; margin-top: 3px; }
   </div>
 </div>
 
-<div class="oo-card">
+<div class="oo-card" data-cuisine="burgers">
   <div class="oo-header"><div class="oo-em">🍔</div><div><div class="oo-name">Five Guys</div><span class="oo-tag best">✅ Solid</span></div></div>
   <div class="oo-order"><b>Try:</b> Cheeseburger with all the toppings (free), Cajun fries, milkshake with mix-ins.</div>
   <div class="oo-btns">
@@ -319,9 +340,9 @@ header p { color: rgba(255,255,255,0.85); font-size: 12px; margin-top: 3px; }
   </div>
 </div>
 
-<div class="oo-label">🥡 Asian</div>
+<div class="oo-label" data-cuisine="asian">🥡 Asian</div>
 
-<div class="oo-card">
+<div class="oo-card" data-cuisine="asian">
   <div class="oo-header"><div class="oo-em">🍣</div><div><div class="oo-name">Wild Ginger on 116th</div><span class="oo-tag best">✅ Best Sushi</span></div></div>
   <div class="oo-order"><b>Try:</b> Premium rolls (Mangolicious, Crab Rangoon Roll), salmon nigiri, miso soup. Family-run, generous portions.</div>
   <div class="oo-btns">
@@ -329,7 +350,7 @@ header p { color: rgba(255,255,255,0.85); font-size: 12px; margin-top: 3px; }
   </div>
 </div>
 
-<div class="oo-card">
+<div class="oo-card" data-cuisine="asian">
   <div class="oo-header"><div class="oo-em">🍜</div><div><div class="oo-name">JINYA Ramen Bar</div><span class="oo-tag best">✅ Solid</span></div></div>
   <div class="oo-order"><b>Try:</b> Tonkotsu Black, Spicy Chicken Ramen, Impossible Bowl (vegan). Pork buns and gyoza for shared starters.</div>
   <div class="oo-btns">
@@ -337,9 +358,9 @@ header p { color: rgba(255,255,255,0.85); font-size: 12px; margin-top: 3px; }
   </div>
 </div>
 
-<div class="oo-label">🌮 Mexican</div>
+<div class="oo-label" data-cuisine="mexican">🌮 Mexican</div>
 
-<div class="oo-card">
+<div class="oo-card" data-cuisine="mexican">
   <div class="oo-header"><div class="oo-em">🌮</div><div><div class="oo-name">Verde Flavors of Mexico</div><span class="oo-tag fam">✅ Family Favorite</span></div></div>
   <div class="oo-order"><b>Try:</b> Street tacos, fajitas, enchiladas verdes, queso fundido. Authentic, generous portions.</div>
   <div class="oo-btns">
@@ -347,7 +368,7 @@ header p { color: rgba(255,255,255,0.85); font-size: 12px; margin-top: 3px; }
   </div>
 </div>
 
-<div class="oo-card">
+<div class="oo-card" data-cuisine="mexican">
   <div class="oo-header"><div class="oo-em">🌶️</div><div><div class="oo-name">Torchy's Tacos</div><span class="oo-tag best">✅ Solid</span></div></div>
   <div class="oo-order"><b>Try:</b> Trailer Park (with mom), Brushfire, Democrat. Queso is famous. Migas tacos for breakfast.</div>
   <div class="oo-btns">
@@ -356,9 +377,9 @@ header p { color: rgba(255,255,255,0.85); font-size: 12px; margin-top: 3px; }
   </div>
 </div>
 
-<div class="oo-label">🥞 Breakfast & Brunch</div>
+<div class="oo-label" data-cuisine="breakfast">🥞 Breakfast & Brunch</div>
 
-<div class="oo-card">
+<div class="oo-card" data-cuisine="breakfast">
   <div class="oo-header"><div class="oo-em">🥞</div><div><div class="oo-name">The Original Pancake House</div><span class="oo-tag fam">✅ Family Favorite</span></div></div>
   <div class="oo-order"><b>Try:</b> Apple Pancake (signature), Dutch Baby, German Pancake, classic three-egg omelets. Worth the wait on weekends.</div>
   <div class="oo-btns">
@@ -366,7 +387,7 @@ header p { color: rgba(255,255,255,0.85); font-size: 12px; margin-top: 3px; }
   </div>
 </div>
 
-<div class="oo-card">
+<div class="oo-card" data-cuisine="breakfast">
   <div class="oo-header"><div class="oo-em">🍳</div><div><div class="oo-name">Wild Eggs</div><span class="oo-tag fam">✅ Family Favorite</span></div></div>
   <div class="oo-order"><b>Try:</b> Kelsey's Goetta Skillet, Surfin' Bird, Cinful French Toast. Bottomless coffee.</div>
   <div class="oo-btns">
@@ -374,9 +395,9 @@ header p { color: rgba(255,255,255,0.85); font-size: 12px; margin-top: 3px; }
   </div>
 </div>
 
-<div class="oo-label">🍝 Italian & Pizza</div>
+<div class="oo-label" data-cuisine="italian">🍝 Italian & Pizza</div>
 
-<div class="oo-card">
+<div class="oo-card" data-cuisine="italian">
   <div class="oo-header"><div class="oo-em">🍝</div><div><div class="oo-name">Sangiovese Ristorante</div><span class="oo-tag best">✅ Top Italian</span></div></div>
   <div class="oo-order"><b>Try:</b> Veal Parmesan, Lobster Ravioli, Filet Tips. Their bread is legendary. Date-night quality, family welcome.</div>
   <div class="oo-btns">
@@ -384,7 +405,7 @@ header p { color: rgba(255,255,255,0.85); font-size: 12px; margin-top: 3px; }
   </div>
 </div>
 
-<div class="oo-card">
+<div class="oo-card" data-cuisine="italian">
   <div class="oo-header"><div class="oo-em">🍕</div><div><div class="oo-name">Domino's / Pizza Hut</div><span class="oo-tag quick">⚡ Quick & Easy</span></div></div>
   <div class="oo-order"><b>Try:</b> Whatever the kids vote for. Hand-tossed cheese, pepperoni, BBQ chicken. Add wings or breadsticks.</div>
   <div class="oo-btns">
@@ -393,9 +414,9 @@ header p { color: rgba(255,255,255,0.85); font-size: 12px; margin-top: 3px; }
   </div>
 </div>
 
-<div class="oo-label">⚡ Fast & Easy</div>
+<div class="oo-label" data-cuisine="fast">⚡ Fast & Easy</div>
 
-<div class="oo-card">
+<div class="oo-card" data-cuisine="fast">
   <div class="oo-header"><div class="oo-em">🥗</div><div><div class="oo-name">Chicken Salad Chick</div><span class="oo-tag quick">⚡ Quick & Easy</span></div></div>
   <div class="oo-order"><b>Try:</b> Trio (3 chicken salad scoops), Classic Carol, Fancy Nancy, Olivia's Old South, Buffalo Barclay. Broccoli salad on the side.</div>
   <div class="oo-btns">
@@ -404,7 +425,7 @@ header p { color: rgba(255,255,255,0.85); font-size: 12px; margin-top: 3px; }
   </div>
 </div>
 
-<div class="oo-card">
+<div class="oo-card" data-cuisine="fast">
   <div class="oo-header"><div class="oo-em">🥖</div><div><div class="oo-name">Panera Bread</div><span class="oo-tag quick">⚡ Quick & Easy</span></div></div>
   <div class="oo-order"><b>Try:</b> Broccoli Cheddar in a bread bowl, You Pick Two combos, Mac & Cheese, Modern Greek Salad. Bagels in the morning.</div>
   <div class="oo-btns">
@@ -413,7 +434,7 @@ header p { color: rgba(255,255,255,0.85); font-size: 12px; margin-top: 3px; }
   </div>
 </div>
 
-<div class="oo-card">
+<div class="oo-card" data-cuisine="fast">
   <div class="oo-header"><div class="oo-em">🍔</div><div><div class="oo-name">Wendy's</div><span class="oo-tag quick">⚡ Quick & Easy</span></div></div>
   <div class="oo-order"><b>Try:</b> Dave's Double, Spicy Chicken Sandwich, Baconator, Frosty (chocolate or vanilla), chili. 4 for $4 if budget matters.</div>
   <div class="oo-btns">
@@ -1341,6 +1362,9 @@ var RECIPES = [
 /* ---------- STATE ---------- */
 var matchMode = "all"; // 'all' or 'strict'
 var filters = { meal:"any", diff:"any", time:"any" };
+var invCatFilter = "all";
+var cookMealFilter = "all";
+var ooCuisineFilter = "all";
 var SHOPKEY = "bk_shop_v1";
 
 /* ---------- INVENTORY RENDERING ---------- */
@@ -1369,6 +1393,10 @@ function renderInv() {
       for (var i=0; i<it.tags.length; i++) { if (it.tags[i].indexOf(q) !== -1) return true; }
       return false;
     });
+  }
+  // Filter by category chip
+  if (invCatFilter !== "all") {
+    items = items.filter(function(it){ return it.cat === invCatFilter; });
   }
 
   // Sort
@@ -1507,7 +1535,9 @@ function renderSuggestions() {
 function renderCook() {
   var grid = document.getElementById("cookGrid");
   var byMeal = { breakfast:[], lunch:[], dinner:[], snack:[] };
-  for (var i=0; i<RECIPES.length; i++) byMeal[RECIPES[i].meal].push(RECIPES[i]);
+  for (var i=0; i<RECIPES.length; i++) {
+    if (cookMealFilter === "all" || RECIPES[i].meal === cookMealFilter) byMeal[RECIPES[i].meal].push(RECIPES[i]);
+  }
 
   var labels = { breakfast:"BREAKFAST", lunch:"LUNCH", dinner:"DINNER", snack:"SNACKS" };
   var order = ["breakfast","lunch","dinner","snack"];
@@ -1700,8 +1730,52 @@ function go(id, el) {
 function closeOvl(id) { document.getElementById(id).classList.remove("on"); }
 function bgClose(ev, id) { if (ev.target === document.getElementById(id)) closeOvl(id); }
 
+/* ---------- CATEGORY / MEAL FILTER HELPERS ---------- */
+function initInvCatChips() {
+  var cats = [];
+  for (var i=0; i<INVENTORY.length; i++) {
+    if (cats.indexOf(INVENTORY[i].cat) === -1) cats.push(INVENTORY[i].cat);
+  }
+  cats.sort();
+  var el = document.getElementById("invCatChips");
+  var html = '<span class="chip on" data-cat="all" onclick="setInvCat(this)">All</span>';
+  for (var i=0; i<cats.length; i++) {
+    html += '<span class="chip" data-cat="' + esc(cats[i]) + '" onclick="setInvCat(this)">' + esc(cats[i]) + '</span>';
+  }
+  el.innerHTML = html;
+}
+
+function setInvCat(el) {
+  invCatFilter = el.getAttribute("data-cat");
+  var chips = document.querySelectorAll("#invCatChips .chip");
+  for (var i=0; i<chips.length; i++) chips[i].classList.remove("on");
+  el.classList.add("on");
+  renderInv();
+}
+
+function setCookMeal(meal, el) {
+  cookMealFilter = meal;
+  var chips = document.querySelectorAll("#cookMealChips .chip");
+  for (var i=0; i<chips.length; i++) chips[i].classList.remove("on");
+  el.classList.add("on");
+  renderCook();
+}
+
+function setOOCuisine(c, el) {
+  ooCuisineFilter = c;
+  var chips = document.querySelectorAll("#ooCuisineChips .chip");
+  for (var i=0; i<chips.length; i++) chips[i].classList.remove("on");
+  el.classList.add("on");
+  var nodes = document.querySelectorAll(".oo-card, .oo-label");
+  for (var i=0; i<nodes.length; i++) {
+    var dc = nodes[i].getAttribute("data-cuisine");
+    nodes[i].style.display = (c === "all" || dc === c) ? "" : "none";
+  }
+}
+
 /* ---------- INIT ---------- */
 window.addEventListener("DOMContentLoaded", function(){
+  initInvCatChips();
   renderInv();
   renderSuggestions();
   renderCook();
